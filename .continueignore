@@ -1,0 +1,17 @@
+# 忽略依赖和构建产物
+node_modules/
+dist/
+build/
+.next/
+*.log
+package-lock.json
+pnpm-lock.yaml
+
+# 忽略非代码文件
+*.png
+*.jpg
+*.pdf
+*.log
+
+# 忽略测试快照
+__snapshots__/

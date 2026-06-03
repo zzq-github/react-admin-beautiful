@@ -1,0 +1,36 @@
+{
+  "include": ["src"],
+  "compilerOptions": {
+    "baseUrl": ".", 
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "target": "ESNext",
+    "types": ["vite/client","node"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": true,
+    "checkJs": false,
+    
+    "jsx": "react-jsx",
+    
+    /* 模块解析*/
+    "module": "ESNext", 
+    "moduleResolution": "Bundler", // 或者 "Node"，适配 Vite 环境
+    "isolatedModules": true,
+    "noEmit": true,               // ：告诉 TS 仅做检查，不要尝试生成 JS 文件
+    
+    /* 严格程度 - 建议迁移初期关闭部分严格项 */
+    "strict": true,
+    "noImplicitAny": false,       // 允许 any 渡过难关
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* 迁移期不建议开启的选项，防止干扰 */
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
+    "declaration": false,         // 除非你要发布组件库，否则重构期间不需要生成 .d.ts
+    "declarationMap": false
+  }
+}

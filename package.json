@@ -1,0 +1,51 @@
+{
+  "name": "ai-model-platform",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --mode dev",
+    "build": "vite build --mode prod",
+    "preview": "vite preview",
+    "get-repo": "npx repomix",
+    "get-api": "node scripts/generate-api.js",
+    "get-api-code": "node scripts/generate-api-codegen.js"
+  },
+  "dependencies": {
+    "@ant-design/icons": "6.x",
+    "antd": "^6.1.4",
+    "axios": "^1.13.2",
+    "crypto-js": "^4.0.0",
+    "dayjs": "^1.11.19",
+    "js-md5": "^0.8.3",
+    "jsencrypt": "3.3.1",
+    "lucide-react": "^0.263.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.0",
+    "recharts": "^2.5.0",
+    "zustand": "^5.0.9"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
+    "@rollup/pluginutils": "^5.1.4",
+    "@types/babel__core": "^7.20.5",
+    "@types/crypto-js": "^4.2.2",
+    "@types/node": "^25.0.8",
+    "@types/react": "^18.3.27",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^3.1.0",
+    "@vue/compiler-dom": "^3.5.16",
+    "autoprefixer": "^10.4.14",
+    "magic-string": "^0.30.17",
+    "msw": "^2.14.6",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.0",
+    "typescript": "^5.9.3",
+    "vite": "^4.2.0",
+    "vite-plugin-svg-icons": "^2.0.1",
+    "yunji-tagger": "^0.0.9"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "output": {
+    "filePath": "openai/repomix-output.xml",
+    "style": "xml"
+  },
+  "include": [
+    "src/components",
+    "src/hooks",
+    "src/api",
+    "src/utils",
+    "src/store",
+    "src/router",
+    "src/types"
+  ]
+}
