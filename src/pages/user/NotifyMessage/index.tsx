@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+﻿import React, { useCallback } from "react";
 import { renderNotifyMessageColumns } from "./schema/tableColumns";
 import { renderNotifyMessageQueryFields } from "./schema/queryFields";
 import QueryFilter from "@/components/QueryFilter";
@@ -55,7 +55,7 @@ const NotifyMessageManagement: React.FC = () => {
           },
         ]}
       />
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
         <div className="flex flex-col space-y-4">
           <QueryFilter
             fields={renderNotifyMessageQueryFields({})}
@@ -69,7 +69,7 @@ const NotifyMessageManagement: React.FC = () => {
             }}
             leftActions={
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">共 {table.pagination?.total || 0} 条消息</span>
+                <span className="text-sm text-theme-text-secondary">共 {table.pagination?.total || 0} 条消息</span>
               </div>
             }
           />
@@ -88,7 +88,7 @@ const NotifyMessageManagement: React.FC = () => {
                   handleMarkAsRead(record);
                 }
               },
-              className: `cursor-pointer hover:bg-gray-50 ${!record.readStatus ? "bg-blue-50" : ""}`,
+              className: `cursor-pointer hover:bg-theme-hover ${!record.readStatus ? "bg-theme-info-bg" : ""}`,
             })}
           />
         </div>

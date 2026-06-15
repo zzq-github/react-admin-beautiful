@@ -1,4 +1,4 @@
-import { MenuVO } from "@/api/login/types";
+import { AdminMenu } from "@/core/types";
 import { MenuItem } from "@/layout/Sidebar/types";
 import { buildFullPath } from "@/utils/route";
 import SvgIcon from "@/components/SvgIcon";
@@ -79,7 +79,7 @@ const iconMap: Record<string, string> = {
  * @param parentPath 父级菜单的路径（用于拼接子菜单路径）
  * @returns 转换后的前端菜单项
  */
-export function convertMenuVOToMenuItem(menuVO: MenuVO, parentPath: string = ""): MenuItem | null {
+export function convertMenuVOToMenuItem(menuVO: AdminMenu, parentPath: string = ""): MenuItem | null {
   // 过滤掉 visible: false 的菜单项
   if (!menuVO.visible) {
     return null;
@@ -115,7 +115,7 @@ export function convertMenuVOToMenuItem(menuVO: MenuVO, parentPath: string = "")
 
   return {
     id: menuVO.id,
-    label: menuVO.name,
+    label: menuVO.title,
     path: fullPath,
     icon: iconComponent,
     children,
@@ -127,12 +127,17 @@ export function convertMenuVOToMenuItem(menuVO: MenuVO, parentPath: string = "")
  * @param menuVO 后端菜单树（可能是单个根节点或数组）
  * @returns 转换后的菜单项数组
  */
-export function convertMenuVOToMenuItems(menuVO: MenuVO | MenuVO[] | null): MenuItem[] {
+export function convertMenuVOToMenuItems(menuVO: AdminMenu | AdminMenu[] | null): MenuItem[] {
   if (!menuVO) {
     return [];
   }
 
-  const menus = Array.isArray(menuVO) ? menuVO : [menuVO];
+  let menus = Array.isArray(menuVO) ? menuVO : [menuVO];
+
+  // 自动解包：如果唯一根节点是 path='/' 的容器目录，直接取其子菜单
+  if (menus.length === 1 && menus[0].path === '/' && menus[0].type === 'catalog' && menus[0].children?.length) {
+    menus = menus[0].children;
+  }
   
   return menus
     .map(menu => convertMenuVOToMenuItem(menu))

@@ -24,7 +24,7 @@ export const renderDictTypeColumns = ({ EditAction, DeleteAction }) => {
         title: "字典类型",
         dataIndex: "type",
         render: (_: any, record: DictTypeRespVO) => (
-          <a onClick={() => goToDictData(record.type)} className="text-blue-600 hover:underline">{record.type}</a>
+          <a onClick={() => goToDictData(record.type)} className="text-theme-primary hover:underline">{record.type}</a>
         ),
       },
       {
@@ -50,7 +50,7 @@ export const renderDictTypeColumns = ({ EditAction, DeleteAction }) => {
         render: (_: any, record: DictTypeRespVO) => (
           <div className="flex gap-3">
             <a
-              className="text-blue-600 cursor-pointer"
+              className="text-theme-primary cursor-pointer"
               onClick={() => EditAction(record)}
             >
               修改
@@ -63,7 +63,7 @@ export const renderDictTypeColumns = ({ EditAction, DeleteAction }) => {
               okText="是"
               cancelText="否"
             >
-              <a className="text-red-600 cursor-pointer">删除</a>
+              <a className="text-theme-error cursor-pointer">删除</a>
             </Popconfirm>
           </div>
         ),

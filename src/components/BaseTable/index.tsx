@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Table, Empty } from "antd";
-// 导入 Ant Design 的原始类型，确保 API 对齐
+import { Table, Empty, Card } from "antd";
 import type { TablePaginationConfig } from "antd";
 import type { BaseTableProps } from "./types";
 
 const DEFAULT_PAGE_SIZE = 10;
 
 /**
- * 使用泛型 T 继承自 Record<string, any> 以保证兼容性
- * 继承 TableProps<T> 可以直接透传所有 AntD Table 支持的属性
+ * 通用表格组件
+ * 封装 Ant Design Table，统一分页、空状态、多选等能力
  */
-
 const BaseTable = <T extends Record<string, any>>({
   rowKey = "id",
   columns = [],
@@ -22,29 +20,28 @@ const BaseTable = <T extends Record<string, any>>({
   scroll,
   emptyText = "暂无数据",
   onChange,
-  showSelection = false, // 默认不开启
+  showSelection = false,
   onSelectionChange,
+  header,
   ...rest
 }: BaseTableProps<T>) => {
-  // 1. 内部维护选中状态
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
   useEffect(() => {
     setSelectedRowKeys([]);
     onSelectionChange?.([], []);
-  }, [dataSource]); // 只要数据源变了（通常翻页、搜索都会触发数据源变化），就重置
-  
-  // 2. 只有开启 showSelection 时才启用 rowSelection
+  }, [dataSource]);
+
   const rowSelection = showSelection
     ? {
         selectedRowKeys,
         onChange: (keys: React.Key[], rows: T[]) => {
           setSelectedRowKeys(keys);
-          // 将选中的数据同步给父组件
           onSelectionChange?.(keys, rows);
         },
       }
     : undefined;
-  // 处理分页逻辑
+
   const resolvedPagination: TablePaginationConfig | false =
     pagination === false
       ? false
@@ -53,11 +50,10 @@ const BaseTable = <T extends Record<string, any>>({
           showSizeChanger: true,
           showQuickJumper: true,
           showTotal: (total: number) => `共 ${total} 条`,
-          // 如果 pagination 是对象，则展开它的属性（例如自定义当前页、每页条数）
           ...(typeof pagination === "object" ? pagination : {}),
         };
 
-  return (
+  const tableElement = (
     <Table<T>
       rowKey={rowKey}
       columns={columns}
@@ -75,6 +71,21 @@ const BaseTable = <T extends Record<string, any>>({
       {...rest}
     />
   );
+
+  // 如果有 header，用 Card 包裹
+  if (header) {
+    return (
+      <Card
+        title={header}
+        size="small"
+        className="shadow-sm"
+      >
+        {tableElement}
+      </Card>
+    );
+  }
+
+  return tableElement;
 };
 
 export default BaseTable;

@@ -6,6 +6,9 @@ import { useDynamicRoutes } from "./DynamicRoutes";
 import NotifyMessage from "@/pages/user/NotifyMessage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { Loader } from "lucide-react";
+import { appConfig } from "@/config/app";
+
+const Dashboard = lazy(() => import("@/pages/Dashboard"));
 
 const Router: React.FC = () => {
   const [dynamicRouteElements, isLoading] = useDynamicRoutes();
@@ -24,12 +27,13 @@ const Router: React.FC = () => {
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           {/* 1. 登录页 */}
-          <Route path="/login" element={<Login />} />
+          <Route path={appConfig.loginRoute} element={<Login />} />
           
           {/* 2. 业务路由 */}
           <Route path="/" element={<Layout />}>
-            <Route index element={<Navigate to="/system/user-management" replace />} />
-            <Route path="/user/notify-message" element={<NotifyMessage />} />
+            <Route index element={<Navigate to={appConfig.defaultRoute} replace />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path={appConfig.notifyRoute} element={<NotifyMessage />} />
 
             {/* 动态路由 */}
             {dynamicRouteElements}

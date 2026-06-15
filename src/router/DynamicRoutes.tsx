@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useEffect, useState } from "react";
 import { Route } from "react-router-dom";
 import { useUserStore } from "@/store/useUserStore";
+import { getAccessToken } from "@/utils/auth";
 import { convertMenuVOToRouteConfigs } from "@/utils/route";
 import { dynamicImport } from "./dynamicImport";
 
@@ -12,13 +13,15 @@ import { dynamicImport } from "./dynamicImport";
 export const useDynamicRoutes = (): [React.ReactElement[], boolean] => {
   const rawMenus = useUserStore((state) => state.rawMenus);
   const [routeElements, setRouteElements] = useState<React.ReactElement[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // 初始状态：已登录但无 rawMenus 时为 true（等待加载），未登录时为 false
+  const [isLoading, setIsLoading] = useState(() => !!getAccessToken());
 
   useEffect(() => {
-    // 如果没有菜单数据，设置加载完成（空数组）
+    // 如果没有菜单数据
     if (!rawMenus) {
       setRouteElements([]);
-      setIsLoading(false);
+      // 已登录但无 rawMenus → 仍在加载中；未登录 → 不需要加载
+      setIsLoading(!!getAccessToken());
       return;
     }
 
@@ -26,15 +29,18 @@ export const useDynamicRoutes = (): [React.ReactElement[], boolean] => {
     const menuArray = rawMenus ? (Array.isArray(rawMenus) ? rawMenus : [rawMenus]) : [];
     const routeConfigs = convertMenuVOToRouteConfigs(menuArray);
 
-    // 生成路由元素
-    const elements = routeConfigs.map((config) => {
+    // 生成路由元素（过滤掉已有静态路由的 path，避免重复）
+    const staticPaths = ['dashboard'];
+    const elements = routeConfigs
+      .filter((config) => !staticPaths.includes(config.path.replace(/^\//, '')))
+      .map((config) => {
       // 动态导入组件
       const LazyComponent = lazy(() =>
         dynamicImport(config.componentPath).catch((error) => {
           // 返回一个简单的错误组件
           return Promise.resolve({
             default: () => (
-              <div className="p-4 text-red-600">
+              <div className="p-4 text-theme-error">
                 组件加载失败: {config.componentPath}
               </div>
             ),

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import useQueryFilter from "@/hooks/useQueryFilter";
 import useRequest from "@/hooks/useRequest";
 import { getListMenu } from "@/api/system/menu";
-import { handleTree } from "@/utils/ruoyi";
+import { handleTree } from "@/utils/common";
 
 /**
  * 菜单表格自定义 Hook

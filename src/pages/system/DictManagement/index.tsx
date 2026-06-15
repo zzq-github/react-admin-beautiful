@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Database, Plus } from "lucide-react";
 import { useDictStore } from "@/store/useDictStore";
 import QueryFilter from "@/components/QueryFilter";
@@ -48,7 +48,7 @@ const DictManagement: React.FC = () => {
           },
         ]}
       />
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
         <div className="flex flex-col space-y-4">
           <QueryFilter
             fields={renderDictTypeQueryFields()}

@@ -1,4 +1,4 @@
-import { MenuVO } from "@/api/login/types";
+import { AdminMenu } from "@/core/types";
 
 /**
  * 路由配置项
@@ -49,7 +49,7 @@ export function buildFullPath(childPath: string, parentPath: string): string {
  * @returns 路由配置对象（包含 path 和 componentPath，componentPath 可能为空）
  */
 export function convertMenuVOToRouteConfig(
-  menuVO: MenuVO,
+  menuVO: AdminMenu,
   parentPath: string = ''
 ): { path: string; componentPath: string; keepAlive?: boolean; alwaysShow?: boolean } | null {
   // 过滤不可见菜单
@@ -58,12 +58,12 @@ export function convertMenuVOToRouteConfig(
   }
 
   // 按钮类型（type = 3）不需要路由
-  if (menuVO.type === 3) {
+  if (menuVO.type === 'button') {
     return null;
   }
 
   // 只有类型为菜单（type = 2）才需要组件，目录（type = 1）不需要组件
-  const componentPath = menuVO.type === 2 ? menuVO.component : undefined;
+  const componentPath = menuVO.type === 'menu' ? menuVO.component : undefined;
 
   // 构建完整路径
   const fullPath = buildFullPath(menuVO.path || '', parentPath);
@@ -84,17 +84,17 @@ export function convertMenuVOToRouteConfig(
  * @param menus 菜单数组
  * @returns 路由配置数组（仅包含 componentPath 不为空的菜单项）
  */
-export function convertMenuVOToRouteConfigs(menus: MenuVO[]): RouteConfig[] {
+export function convertMenuVOToRouteConfigs(menus: AdminMenu[]): RouteConfig[] {
   const result: RouteConfig[] = [];
 
-  const traverse = (nodes: MenuVO[], currentParentPath: string = '') => {
+  const traverse = (nodes: AdminMenu[], currentParentPath: string = '') => {
     for (const node of nodes) {
       // 计算当前节点的完整路径（无论是否生成路由）
       const fullPath = buildFullPath(node.path || '', currentParentPath);
       const path = fullPath || `/${node.id}`;
 
       // 只有类型为菜单（type = 2）且 component 存在时才生成路由
-      if (node.type === 2 && node.component) {
+      if (node.type === 'menu' && node.component) {
         result.push({
           path,
           componentPath: node.component,

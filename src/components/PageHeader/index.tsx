@@ -24,17 +24,17 @@ const IconMap: Record<string, LucideIcon> = {
 
 // 映射颜色样式
 const ColorMap: Record<string, string> = {
-  blue: "bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400",
-  green: "bg-green-600 hover:bg-green-700 disabled:bg-green-400",
-  gray: "bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400",
+  blue: "bg-theme-primary hover:bg-theme-primary-hover disabled:opacity-60",
+  green: "bg-theme-success hover:bg-theme-success-hover disabled:opacity-60",
+  gray: "bg-theme-text-secondary hover:bg-theme-text disabled:opacity-60",
 };
 
 const PageHeader: React.FC<PageHeaderProps> = ({ title, description, buttons = [] }) => {
   return (
     <div className="flex items-center justify-between mb-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-        {description && <p className="text-gray-600 mt-1">{description}</p>}
+        <h1 className="text-2xl font-bold text-theme-text">{title}</h1>
+        {description && <p className="text-theme-text-secondary mt-1">{description}</p>}
       </div>
       
       <div className="flex gap-4">

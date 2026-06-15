@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import PageHeader from "@/components/PageHeader";
 import QueryFilter from "@/components/QueryFilter";
 import BaseTable from "@/components/BaseTable";
@@ -39,7 +39,7 @@ const RoleManagement: React.FC = () => {
         ]}
       />
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
         <div className="flex flex-col space-y-4">
           <QueryFilter
             fields={renderRoleQueryFields()}

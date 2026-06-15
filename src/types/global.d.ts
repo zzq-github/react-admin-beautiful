@@ -1,31 +1,34 @@
-// src/types/global.d.ts
+// 全局类型定义
 export {};
 declare global {
+  /**
+   * 通用 API 响应结构
+   */
   interface ApiResponse<T = any> {
     code: number;
     data: T;
     msg: string;
   }
 
+  /**
+   * 分页请求参数
+   */
   interface PageParam {
     pageSize: number;
     pageNo: number;
   }
-  // 分页数据公共返回
+
+  /**
+   * 分页数据返回
+   */
   interface PageResult<T> {
-    // 列表数据，泛型表示单条数据类型，实际为数组
-    list: T[]; // 数据
-    total: number; // 总量
+    list: T[];
+    total: number;
   }
 
-  interface CommonResultLong {
-    /** Format: int32 */
-    code?: number;
-    msg?: string;
-    /** Format: int64 */
-    data?: number;
-  }
-
+  /**
+   * 查询字段配置项
+   */
   interface QueryFieldItem {
     name: string;
     label: string;

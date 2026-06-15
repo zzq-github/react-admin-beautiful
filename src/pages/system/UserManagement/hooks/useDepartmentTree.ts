@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import useRequest from "@/hooks/useRequest";
 import { getListSimpleDepartments } from "@/api/system/department";
-import { handleTree } from "@/utils/ruoyi";
+import { handleTree } from "@/utils/common";
 import { convert } from "@/utils/transfer";
 
 /**

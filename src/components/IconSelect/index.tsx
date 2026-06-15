@@ -23,7 +23,7 @@ const IconSelect: React.FC<IconSelectProps> = ({ onSelected }) => {
           allowClear
           value={name}
           placeholder="请输入图标名称"
-          prefix={<SearchOutlined className="text-gray-400" />}
+          prefix={<SearchOutlined className="text-theme-text-tertiary" />}
           onChange={e => setName(e.target.value)}
           className="rounded-md"
         />
@@ -41,14 +41,14 @@ const IconSelect: React.FC<IconSelectProps> = ({ onSelected }) => {
           <div
             key={item}
             onClick={() => onSelected(item)}
-            className="group flex flex-col items-center justify-center py-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-blue-50 hover:text-blue-600"
+            className="group flex flex-col items-center justify-center py-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-theme-primary-bg hover:text-theme-primary"
           >
             {/* 使用 group-hover 实现父级悬浮时图标变色（如果 SvgIcon 支持 color） */}
             <div className="text-2xl mb-1.5 transition-transform duration-200 group-hover:scale-120">
               <SvgIcon iconClass={item} />
             </div>
             
-            <span className="text-[12px] w-full px-1 text-center truncate text-gray-500 group-hover:text-blue-600">
+            <span className="text-[12px] w-full px-1 text-center truncate text-theme-text-tertiary group-hover:text-theme-primary">
               {item}
             </span>
           </div>

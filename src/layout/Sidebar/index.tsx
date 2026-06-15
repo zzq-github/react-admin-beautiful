@@ -90,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
             {item.icon ? (
               React.isValidElement(item.icon) ? (
                 <div
-                  className={`inline-flex items-center justify-center w-[18px] h-[18px] ${isActive(item.path) ? "text-blue-600" : "text-gray-600"}`}
+                  className={`inline-flex items-center justify-center w-[18px] h-[18px] ${isActive(item.path) ? "text-theme-sidebar-text-active" : "text-theme-sidebar-text"}`}
                 >
                   {item.icon}
                 </div>
@@ -98,8 +98,8 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
                 React.createElement(item.icon as React.ComponentType<any>, {
                   size: 18,
                   className: isActive(item.path)
-                    ? "text-blue-600"
-                    : "text-gray-600",
+                    ? "text-theme-sidebar-text-active"
+                    : "text-theme-sidebar-text",
                 })
               )
             ) : (
@@ -112,7 +112,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
           {/* 子菜单渲染 */}
           {hasChildren && (
             <div
-              className={`ml-6 mt-2 space-y-1 border-l-2 border-gray-100 pl-2`}
+              className={`ml-6 mt-2 space-y-1 border-l-2 border-theme-sidebar-border pl-2`}
             >
               {item.children!.map((child: MenuItem) => (
                 <MenuItemNode key={child.id} item={child} level={level + 1} />
@@ -131,26 +131,26 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen }) => {
   const hasDynamicMenus = menus && menus.length > 0;
   return (
     <aside
-      className={`fixed top-16 left-0 bottom-0 pb-8 bg-white shadow-sm border-r border-gray-100 transition-all duration-300 z-20 ${
+      className={`fixed top-16 left-0 bottom-0 pb-8 bg-theme-sidebar-bg shadow-sm border-r border-theme-sidebar-border transition-all duration-300 z-20 ${
         sidebarOpen ? "w-72" : "w-0 overflow-hidden"
       }`}
     >
       <div className="p-4 h-full overflow-y-auto" style={{ marginTop: "30px" }}>
         {/* 加载状态指示器 */}
         {isLoading && (
-          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+          <div className="mb-4 p-3 bg-theme-primary-bg rounded-lg border border-theme-border">
             <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
-              <span className="ml-2 text-sm text-blue-700">加载菜单中...</span>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-theme-primary"></div>
+              <span className="ml-2 text-sm text-theme-primary">加载菜单中...</span>
             </div>
           </div>
         )}
 
         {/* 错误状态指示器 */}
         {hasError && !hasDynamicMenus && (
-          <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
+          <div className="mb-4 p-3 bg-theme-warning-bg rounded-lg border border-theme-warning-border">
             <div className="flex items-center">
-              <span className="text-sm text-yellow-700">动态菜单加载失败</span>
+              <span className="text-sm text-theme-warning">动态菜单加载失败</span>
             </div>
           </div>
         )}

@@ -1,262 +1,187 @@
-# 芋道 React 前端框架
+# React Admin Plus
 
-## 项目简介
+一个面向开源复用的 React Admin 通用模板。目标是让你 clone 后 5 分钟跑起来，然后用少量配置替换成自己的后台项目。
 
-这是一个基于 React 的芋道（Yudao）前端框架，专为后台管理系统开发而设计。本框架提取了芋道 Vue 版前端常用功能，采用更规范的目录和组件命名规则，并集成了一系列现代化开发工具和最佳实践。
+## 特性
 
-**注意**：本项目是自主开发自用的框架，未集成所有前端框架功能，仅包含常用核心功能，适合快速搭建中后台管理系统。
+- React 18 + TypeScript + Vite + Ant Design 6 + Tailwind CSS
+- 代码级主题系统：品牌色、成功、警告、错误、信息色统一配置
+- 动态路由：根据后端菜单生成路由，页面按需懒加载
+- 后端协议适配：通过 adapter 抹平不同后端返回结构
+- 认证服务抽象：登录、退出、权限信息、刷新 token 统一走 `authService`
+- 权限控制：支持路由级和按钮级权限
+- 配置化 CRUD：沉淀表格、查询、表单、弹窗等通用组件
+- MSW Mock：无后端也能直接开发和演示
 
-## 技术栈
+## 内置示例
 
-- **前端框架**: React 18 + TypeScript
-- **构建工具**: Vite 4.x
-- **UI 组件库**: Ant Design 6.x
-- **状态管理**: Zustand
-- **路由管理**: React Router DOM 6.x
-- **HTTP 客户端**: Axios
-- **CSS 框架**: Tailwind CSS 3.x
-- **图标库**: Lucide React
-- **图表库**: Recharts
-- **工具库**: Day.js, Crypto-js, js-md5, jsencrypt
-- **开发工具**: TypeScript 5.x
+默认 Mock 菜单分为三部分：
 
-## 功能特性
+- `Dashboard`：首页示例
+- `Examples`：最小学习示例，包含 Basic List 和 Form Demo
+- `System Demo`：复杂 CRUD 和权限示例，展示用户、角色、菜单等管理页面
 
-### 1. 系统管理
-- **用户管理**: 用户增删改查、状态管理、角色分配
-- **角色管理**: 角色权限配置、数据权限控制
-- **菜单管理**: 动态路由菜单、图标配置、权限控制
-- **部门管理**: 树形部门结构、部门人员管理
-- **岗位管理**: 岗位信息维护
-- **字典管理**: 系统字典数据维护
-- **参数设置**: 系统参数配置管理
-
-### 2. 日志监控
-- **登录日志**: 用户登录记录查询
-- **操作日志**: 用户操作行为记录
-- **系统监控**: 基础系统状态展示
-
-### 3. 个人中心
-- **通知消息**: 用户个人消息通知管理
-
-### 4. 开发特性
-- **动态路由**: 基于后端菜单配置的动态路由加载
-- **权限控制**: 前端路由级和组件级权限控制
-- **请求封装**: 统一的 Axios 请求拦截、Token 自动刷新
-- **表单组件**: 基于 Schema 的表单生成器 (`SchemaForm`)
-- **表格组件**: 增强型表格组件 (`BaseTable`) 支持查询、分页、选择
-- **查询筛选**: 可配置的查询筛选组件 (`QueryFilter`)
-- **弹窗管理**: 统一的弹窗管理组件 (`BaseModal`, `FormModal`)
-- **图标管理**: SVG 图标组件 (`SvgIcon`) 和图标选择器
-
-## 项目结构
-
-```
-src/
-├── api/                    # API 接口定义
-│   ├── login/             # 登录相关接口
-│   └── system/            # 系统管理接口
-├── assets/                # 静态资源
-│   └── icons/svg/         # SVG 图标文件
-├── components/            # 通用组件
-│   ├── BaseModal/         # 基础弹窗组件
-│   ├── BaseTable/         # 基础表格组件
-│   ├── FormModal/         # 表单弹窗组件
-│   ├── QueryFilter/       # 查询筛选组件
-│   ├── SchemaForm/        # Schema 表单组件
-│   └── SvgIcon/           # SVG 图标组件
-├── hooks/                 # 自定义 Hook
-│   ├── useRequest.ts      # 请求 Hook
-│   ├── useTableRequest.ts # 表格请求 Hook
-│   └── useQueryFilter.ts  # 查询筛选 Hook
-├── layout/                # 布局组件
-│   ├── Layout.tsx         # 主布局
-│   ├── Header/            # 顶部导航
-│   └── Sidebar/           # 侧边栏菜单
-├── pages/                 # 页面组件
-│   ├── LoginPage/         # 登录页面
-│   ├── NotFoundPage/      # 404 页面
-│   ├── system/            # 系统管理页面
-│   └── user/              # 个人中心页面
-├── router/                # 路由配置
-│   ├── index.tsx          # 路由主文件
-│   ├── DynamicRoutes.tsx  # 动态路由加载
-│   └── dynamicImport.ts   # 动态导入工具
-├── store/                 # 状态管理
-│   ├── useDictStore.ts    # 字典状态
-│   └── useUserStore.ts    # 用户状态
-├── types/                 # TypeScript 类型定义
-│   ├── env.d.ts           # 环境变量类型
-│   └── global.d.ts        # 全局类型
-└── utils/                 # 工具函数
-    ├── auth.ts            # 认证相关
-    ├── request.ts         # 请求封装
-    ├── menu.ts            # 菜单处理
-    ├── route.ts           # 路由工具
-    ├── dict.ts            # 字典工具
-    └── encrypt.ts         # 加密工具
-```
+新增页面可以参考 [创建页面指南](./docs/create-page.md)。
 
 ## 快速开始
 
-### 环境要求
-
-- Node.js 18+ 
-- npm 或 yarn 或 pnpm
-
-### 安装依赖
-
 ```bash
-# 使用 npm
-npm install
-
-# 使用 yarn
-yarn install
-
-# 使用 pnpm
 pnpm install
+pnpm dev
 ```
 
-### 开发环境运行
+浏览器打开终端输出的本地地址，默认开发端口是 `3030`。
+
+默认 Mock 账号：
+
+```text
+username: admin
+password: admin123
+```
+
+常用命令：
 
 ```bash
-npm run dev
+pnpm dev       # 启动开发环境，默认读取 .env.dev
+pnpm build     # 构建生产版本，默认读取 .env.prod
+pnpm preview   # 预览生产构建产物
 ```
 
-应用将启动在 `http://localhost:5173`（默认端口）。
+## 创建自己的项目
 
-### 生产环境构建
+1. 复制环境变量示例：
 
 ```bash
-npm run build
+cp .env.example .env.dev
 ```
 
-构建产物将输出到 `dist` 目录。
+Windows PowerShell:
 
-### 预览构建结果
-
-```bash
-npm run preview
+```powershell
+Copy-Item .env.example .env.dev
 ```
 
-## 配置说明
+2. 修改应用信息：
 
-### 环境变量配置
-
-项目支持多环境配置，通过 `.env.dev`（开发环境）和 `.env.prod`（生产环境）文件管理。
-
-主要配置项：
-
-```bash
-# 基础 API 地址（必须修改）
-VITE_BASE_API = 'http://your-api-server.com'
-
-# 页面标题
-VITE_TITLE = '管理系统'
-
-# 功能开关
-VITE_TENANT_ENABLE = false    # 多租户开关（本框架未实现）
-VITE_CAPTCHA_ENABLE = false   # 验证码开关（本框架未实现）
-VITE_DOC_ENABLE = false       # 文档开关
-
-# 百度统计代码（可选）
-VITE_BAIDU_CODE = 'your-code'
+```env
+VITE_APP_NAME=Your Admin
+VITE_APP_SHORT_NAME=Y
+VITE_APP_DESCRIPTION=Your Platform
+VITE_APP_COPYRIGHT=(c) 2026 Your Company
 ```
 
-### 后端对接配置
+3. 修改默认路由和接口地址：
 
-1. **修改 API 基础地址**：在 `.env.dev` 和 `.env.prod` 中设置 `VITE_BASE_API` 为实际后端地址。
-2. **接口路径**：默认接口路径为 `VITE_BASE_API + "/byai-api/"`，可在 `src/utils/request.ts` 中调整。
+```env
+VITE_APP_DEFAULT_ROUTE=/dashboard
+VITE_BASE_API=
+VITE_API_PREFIX=/api
+VITE_PROXY_TARGET=http://localhost:8080
+VITE_MSW_ENABLE=true
+```
 
-## 注意事项
+4. 修改主题：
 
-### 1. 菜单路径映射
+```text
+src/theme/appTheme.ts
+```
 
-由于目录和组件命名规则与芋道 Vue 版前端不一致但更规范，**数据库中的菜单组件路径需要修改**。
+5. 接真实后端时关闭 Mock：
 
-**示例**：
-- 原菜单组件路径：`system/menu/index`
-- 需要改为本项目中对应的路径：`system/MenuManagement/index`
+```env
+VITE_MSW_ENABLE=false
+```
 
-其他路径改写规则相同，请根据实际页面路径调整数据库中的菜单配置。
+然后根据你的后端返回格式调整：
 
-### 2. 功能开关
+```text
+src/core/adapters/protocol.ts
+src/core/adapters/auth.ts
+src/core/adapters/menu.ts
+src/core/services/authService.ts
+```
 
-**必须关闭以下后端功能开关**，因为这些功能在本框架中尚未实现：
-- **多租户功能**：在 `.env` 文件中设置 `VITE_TENANT_ENABLE = false`
-- **验证码功能**：在 `.env` 文件中设置 `VITE_CAPTCHA_ENABLE = false`
+## 配置入口
 
-如果后端开启了这些功能，会导致前端接口调用异常。
+项目级配置集中在：
 
-### 3. 动态路由配置
+```text
+src/config/app.ts
+```
 
-动态路由从后端菜单接口获取，菜单数据需要包含以下字段：
-- `path`: 路由路径（对应组件路径）
-- `component`: 组件名称（对应 `src/pages` 下的文件路径）
-- `icon`: 图标名称（对应 `assets/icons/svg` 下的 SVG 文件名）
+这里统一读取应用名称、描述、默认路由、登录路由、通知路由、API 前缀、Mock 开关等配置。页面和布局不要直接读取散落的环境变量，优先使用 `appConfig`。
 
-### 4. 图标使用
+## 目录结构
 
-项目使用 SVG 图标系统，图标文件位于 `src/assets/icons/svg/` 目录。使用方式：
+```text
+src/
+├── api/              # API 请求封装
+├── components/       # 通用组件
+├── config/           # 应用级配置入口
+├── core/             # 模板核心模型、adapter、service
+├── hooks/            # 通用 Hooks
+├── layout/           # 布局组件
+├── mock/             # MSW Mock
+├── pages/            # 页面和示例业务，examples 是最小示例，system 是复杂示例
+├── router/           # 静态路由、动态路由、页面扫描
+├── store/            # Zustand 状态管理
+├── theme/            # 主题 token 和 ThemeProvider
+├── types/            # TypeScript 类型定义
+└── utils/            # 通用工具
+```
+
+## 环境变量
+
+| 变量名 | 说明 | 默认值 |
+| --- | --- | --- |
+| `VITE_APP_NAME` | 应用名称 | React Admin Plus |
+| `VITE_APP_SHORT_NAME` | Logo 短名称 | R |
+| `VITE_APP_DESCRIPTION` | 应用描述 | Admin Platform |
+| `VITE_APP_COPYRIGHT` | 登录页版权文案 | (c) 2026 React Admin Plus |
+| `VITE_APP_DEFAULT_ROUTE` | 登录后的默认路由 | /dashboard |
+| `VITE_APP_LOGIN_ROUTE` | 登录页路由 | /login |
+| `VITE_APP_NOTIFY_ROUTE` | 消息中心路由 | /user/notify-message |
+| `VITE_BASE_API` | 后端 API 基础地址 | 空字符串 |
+| `VITE_API_PREFIX` | API 请求前缀 | /api |
+| `VITE_PROXY_TARGET` | Vite 开发代理目标 | http://localhost:8080 |
+| `VITE_CAPTCHA_ENABLE` | 验证码开关 | false |
+| `VITE_MSW_ENABLE` | MSW Mock 开关 | dev: true / prod: false |
+| `VITE_TAGGER_ENABLE` | 开发辅助插件开关 | false |
+
+## 主题定制
+
+主题不再提供运行时预设颜色切换，适合作为开源模板的稳定基座。你可以在 `src/theme/appTheme.ts` 中统一配置：
+
+- `colorPrimary`
+- `colorSuccess`
+- `colorWarning`
+- `colorError`
+- `colorInfo`
+- 各状态的 hover、active、bg、border 色
+- `borderRadius`
+
+这些配置会同步到 Ant Design token、CSS 变量和 Tailwind 语义类，例如：
 
 ```tsx
-import SvgIcon from '@/components/SvgIcon';
-
-<SvgIcon name="user" className="w-5 h-5" />
+<span className="text-theme-success">已启用</span>
+<div className="bg-theme-error-bg border border-theme-error-border">错误提示</div>
 ```
 
-## 开发指南
+## 对接后端
 
-### API 代码生成
+模板内部尽量不绑定某个后端协议。接入真实后端时推荐顺序：
 
-项目提供了 API 代码生成脚本，可根据后端 Swagger 文档自动生成 TypeScript 接口代码：
+1. 关闭 Mock：`VITE_MSW_ENABLE=false`
+2. 配置 `VITE_BASE_API` 或 `VITE_PROXY_TARGET`
+3. 在 `src/api/` 中替换接口路径
+4. 在 `src/core/adapters` 中适配返回结构
+5. 在 `src/core/services/authService.ts` 中统一认证行为
 
-```bash
-# 生成 API 接口代码
-npm run get-api
+## 文档
 
-# 生成 API 代码（带代码生成器）
-npm run get-api-code
-```
+- [模板设计说明](./docs/admin-template-guide.md)
+- [创建页面指南](./docs/create-page.md)
 
-### 组件开发规范
+## License
 
-1. **组件命名**：使用 PascalCase，目录与组件同名
-2. **文件结构**：每个组件目录包含 `index.tsx`（主组件）和 `types.ts`（类型定义）
-3. **样式规范**：使用 Tailwind CSS 原子类，避免编写自定义 CSS
-4. **状态管理**：简单状态使用组件内状态，跨组件状态使用 Zustand
-5. **表单处理**：优先使用 `SchemaForm` 组件生成表单
-
-### 新增页面步骤
-
-1. 在 `src/pages` 下创建页面目录和组件
-2. 在 `src/router/DynamicRoutes.tsx` 中配置路由懒加载（可选）
-3. 后端菜单管理中添加对应菜单项
-4. 如需接口，在 `src/api` 下创建对应接口定义
-
-## 常见问题
-
-### Q1: 启动后页面空白，控制台报错
-A: 检查 `VITE_BASE_API` 配置是否正确，确保后端服务可访问。
-
-### Q2: 登录后菜单不显示
-A: 检查菜单接口返回的数据格式，确保 `path` 和 `component` 字段正确映射到前端路由。
-
-### Q3: 图标显示为方块
-A: 检查图标名称是否正确，确保 `src/assets/icons/svg` 目录下存在对应的 SVG 文件。
-
-### Q4: 生产环境构建后资源加载 404
-A: 检查 `vite.config.ts` 中的 `base` 配置，或部署服务器的路径配置。
-
-## 许可证
-
-本项目基于 MIT 许可证开源，详情请参阅 LICENSE 文件。
-
-## 致谢
-
-- 感谢 [芋道开源项目](https://github.com/YunaiV/ruoyi-vue-pro) 提供的后端架构参考
-- 感谢 Ant Design、React、Vite 等优秀开源项目
-
----
-
-**提示**：本项目仍在持续完善中，欢迎提交 Issue 和 Pull Request。
+[MIT](./LICENSE)

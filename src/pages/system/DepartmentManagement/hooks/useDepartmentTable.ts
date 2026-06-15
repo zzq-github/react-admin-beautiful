@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import useQueryFilter from "@/hooks/useQueryFilter";
 import useRequest from "@/hooks/useRequest";
 import { getDepartmentList } from "@/api/system/department";
-import { handleTree } from "@/utils/ruoyi";
+import { handleTree } from "@/utils/common";
 
 /**
  * 部门表格自定义 Hook

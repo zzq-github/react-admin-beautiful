@@ -70,21 +70,21 @@ export const renderUserColumns = ({ EditAction, DeleteAction, StatusAction, Pass
         render: (_: any, record: UserRespVO) => (
           <div className="flex gap-3">
             <a
-              className="text-blue-600 cursor-pointer"
+              className="text-theme-primary cursor-pointer"
               onClick={() => EditAction(record)}
             >
               修改
             </a>
 
             <a
-              className="text-green-600 cursor-pointer"
+              className="text-theme-success cursor-pointer"
               onClick={() => PasswordAction(record)}
             >
               修改密码
             </a>
 
             <a
-              className="text-purple-600 cursor-pointer"
+              className="text-theme-info cursor-pointer"
               onClick={() => AssignRoleAction(record)}
             >
               分配角色
@@ -97,7 +97,7 @@ export const renderUserColumns = ({ EditAction, DeleteAction, StatusAction, Pass
               okText="是"
               cancelText="否"
             >
-              <a className="text-red-600 cursor-pointer">删除</a>
+              <a className="text-theme-error cursor-pointer">删除</a>
             </Popconfirm>
           </div>
         ),

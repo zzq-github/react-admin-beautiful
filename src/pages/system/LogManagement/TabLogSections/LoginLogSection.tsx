@@ -18,7 +18,7 @@ const LoginLogSection: React.FC = () => {
 
   return (
     <>
-      <div className="p-6 bg-gray-50 border-b border-gray-200">
+      <div className="p-6 bg-theme-bg-base border-b border-theme-border">
         <QueryFilter
           fields={LoginLogFields()}
           onChange={query.onChange}

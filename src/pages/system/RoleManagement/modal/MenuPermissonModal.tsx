@@ -4,7 +4,7 @@ import React, { useMemo, useRef, useState } from "react";
 import { Checkbox, Form, Input, message, Tree } from "antd";
 import useRequest from "@/hooks/useRequest";
 import { getListMenu } from "@/api/system/menu";
-import { handleTree } from "@/utils/ruoyi";
+import { handleTree } from "@/utils/common";
 import { assignRoleMenu, listRoleMenus } from "@/api/system/permission";
 import { RoleRespVO } from "@/api/system/role/types";
 
@@ -73,7 +73,7 @@ const MenuPermissonModal = ({ editMenuPermissionModalRef, refreshTable }) => {
                 全选/全不选
               </Checkbox>
             </div>
-            <div className="rounded-md border border-gray-300 p-3 max-h-[400px] overflow-auto hover:border-blue-400 transition-colors">
+            <div className="rounded-md border border-theme-border p-3 max-h-[400px] overflow-auto hover:border-theme-primary transition-colors">
               <Tree
                 checkable
                 selectable={false}

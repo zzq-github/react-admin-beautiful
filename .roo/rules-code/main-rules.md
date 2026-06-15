@@ -1,4 +1,4 @@
-# React 18 + Ant Design + TypeScript 代码规范
+# React Admin Plus 代码规范
 
 所有生成的代码必须遵循以下规范：
 
@@ -16,19 +16,24 @@
 - 简单表单弹窗可以使用 `src/components/FormModal/index.tsx` 组件
 - 复杂逻辑受控弹窗可以使用 `src/components/BaseModal/index.tsx` 组件
 - 表格配套查询栏可以使用 `src/components/QueryFilter/index.tsx` 组件
-- 使用组件和钩子时，必须阅读当前组件和钩子的定义和使用案例，再按照规范生成代码。
+- 页面容器统一使用 `src/components/PageContainer/index.tsx` 组件
+- 权限控制使用 `src/components/Auth/index.tsx` 组件或 `usePermission` Hook
+- 主题定制使用 `src/theme/` 下的 `useTheme` Hook
+- 使用组件和钩子时，必须阅读当前组件和钩子的定义和使用案例，再按照规范生成代码
 
 ## 项目目录结构
 
-为了帮助 AI 理解代码组织，请遵循以下目录结构（仅展示到 `src/` 的子级，不深入下一级）：
-
-- `src/api/` - API 请求封装
-- `src/assets/` - 静态资源（图标、图片等）
-- `src/components/` - 可复用组件
-- `src/hooks/` - 自定义 React Hooks
-- `src/layout/` - 布局组件
-- `src/pages/` - 页面组件
-- `src/router/` - 路由配置
-- `src/store/` - 状态管理（Zustand/Redux）
-- `src/types/` - TypeScript 类型定义
-- `src/utils/` - 工具函数
+```
+src/
+├── api/              # API 请求封装
+├── assets/           # 静态资源（图标、图片等）
+├── components/       # 可复用组件
+├── hooks/            # 自定义 React Hooks
+├── layout/           # 布局组件
+├── pages/            # 页面组件
+├── router/           # 路由配置
+├── store/            # 状态管理（Zustand）
+├── theme/            # 主题系统
+├── types/            # TypeScript 类型定义
+└── utils/            # 工具函数
+```

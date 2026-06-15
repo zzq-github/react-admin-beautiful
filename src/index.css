@@ -4,47 +4,51 @@
 
 /* Custom styles */
 .nav-item {
-  @apply flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all duration-200;
+  @apply flex items-center gap-3 px-3 py-2.5 text-theme-sidebar-text hover:text-theme-text hover:bg-theme-sidebar-hover rounded-lg transition-all duration-200;
 }
 
 .nav-item-active {
-  @apply flex items-center gap-3 px-3 py-2.5 text-blue-700 bg-blue-50 rounded-lg font-medium shadow-sm;
+  @apply flex items-center gap-3 px-3 py-2.5 text-theme-sidebar-text-active bg-theme-sidebar-active rounded-lg font-medium shadow-sm;
 }
 
 .card {
-  @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+  @apply bg-theme-bg rounded-xl shadow-sm border border-theme-border p-6;
 }
 
 .metric-card {
-  @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition-all duration-200;
+  @apply bg-theme-bg rounded-xl shadow-sm border border-theme-border p-6 transition-all duration-200;
 }
 
 .btn-primary {
-  @apply bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
+  @apply bg-theme-primary hover:bg-theme-primary-hover text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
 }
 
 .btn-secondary {
-  @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium px-4 py-2 rounded-lg transition-all duration-200;
+  @apply bg-theme-bg-elevated hover:bg-theme-hover text-theme-text font-medium px-4 py-2 rounded-lg transition-all duration-200;
 }
 
 .btn-danger {
-  @apply bg-red-500 hover:bg-red-600 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200;
+  @apply bg-theme-error hover:bg-theme-error-hover text-white font-medium px-4 py-2 rounded-lg transition-all duration-200;
 }
 
 .input-field {
-  @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200;
+  @apply w-full p-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-primary focus:border-theme-primary transition-all duration-200;
 }
 
 .status-success {
-  @apply px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium;
+  @apply px-2 py-1 bg-theme-success-bg text-theme-success rounded-full text-xs font-medium;
 }
 
 .status-warning {
-  @apply px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium;
+  @apply px-2 py-1 bg-theme-warning-bg text-theme-warning rounded-full text-xs font-medium;
 }
 
 .status-error {
-  @apply px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-medium;
+  @apply px-2 py-1 bg-theme-error-bg text-theme-error rounded-full text-xs font-medium;
+}
+
+.status-info {
+  @apply px-2 py-1 bg-theme-info-bg text-theme-info rounded-full text-xs font-medium;
 }
 
 /* Scrollbar styles */
@@ -54,17 +58,25 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f3f4f6;
+  background: transparent;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 3px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Animation classes */
@@ -108,4 +120,11 @@
   border-radius: 8px !important;
   border: none !important;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Sidebar collapsed popover */
+.sidebar-collapsed-popover .ant-popover-inner {
+  padding: 4px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
 }

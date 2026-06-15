@@ -1,4 +1,4 @@
-import { Plus } from "lucide-react";
+﻿import { Plus } from "lucide-react";
 import QueryFilter from "@/components/QueryFilter";
 import BaseTable from "@/components/BaseTable";
 import EditDepartmentModal from "@/components/FormModal";
@@ -35,7 +35,7 @@ const DepartmentManagement = () => {
         ]}
       />
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
         <div className="flex flex-col space-y-4">
           <QueryFilter
             fields={DepartmentFields({})}

@@ -1,0 +1,202 @@
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { ConfigProvider, theme as antdTheme } from "antd";
+import {
+  ThemeConfig,
+  defaultThemeConfig,
+  loadThemeConfig,
+  saveThemeConfig,
+} from "./themes";
+import { appTheme } from "./appTheme";
+
+interface ThemeContextValue {
+  themeConfig: ThemeConfig;
+  setThemeConfig: (config: Partial<ThemeConfig>) => void;
+}
+
+const ThemeContext = createContext<ThemeContextValue | null>(null);
+
+const DARK_CSS_VARS: Record<string, string> = {
+  "--color-bg-base": "#141414",
+  "--color-bg-container": "#1f1f1f",
+  "--color-bg-elevated": "#262626",
+  "--color-bg-spotlight": "#303030",
+  "--color-header-bg": "rgba(31, 31, 31, 0.86)",
+  "--color-sidebar-bg": "#1f1f1f",
+  "--color-sidebar-border": "#303030",
+  "--color-sidebar-hover-bg": "rgba(255, 255, 255, 0.08)",
+  "--color-sidebar-active-bg": `color-mix(in srgb, ${appTheme.colorPrimary} 22%, transparent)`,
+  "--color-hover-bg": "rgba(255, 255, 255, 0.08)",
+  "--color-border": "#424242",
+  "--color-border-secondary": "#303030",
+  "--color-text": "rgba(255, 255, 255, 0.88)",
+  "--color-text-secondary": "rgba(255, 255, 255, 0.65)",
+  "--color-text-tertiary": "rgba(255, 255, 255, 0.45)",
+  "--color-sidebar-text": "rgba(255, 255, 255, 0.65)",
+  "--color-sidebar-text-active": appTheme.colorPrimaryHover,
+};
+
+const LIGHT_CSS_VARS: Record<string, string> = {
+  "--color-bg-base": "#f5f5f5",
+  "--color-bg-container": "#ffffff",
+  "--color-bg-elevated": "#ffffff",
+  "--color-bg-spotlight": "#f0f0f0",
+  "--color-header-bg": "rgba(255, 255, 255, 0.86)",
+  "--color-sidebar-bg": "#ffffff",
+  "--color-sidebar-border": "#f0f0f0",
+  "--color-sidebar-hover-bg": "#f5f5f5",
+  "--color-sidebar-active-bg": appTheme.colorPrimaryBg,
+  "--color-hover-bg": "#f5f5f5",
+  "--color-border": "#d9d9d9",
+  "--color-border-secondary": "#f0f0f0",
+  "--color-text": "rgba(0, 0, 0, 0.88)",
+  "--color-text-secondary": "rgba(0, 0, 0, 0.65)",
+  "--color-text-tertiary": "rgba(0, 0, 0, 0.45)",
+  "--color-sidebar-text": "rgba(0, 0, 0, 0.65)",
+  "--color-sidebar-text-active": appTheme.colorPrimary,
+};
+
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [themeConfig, setThemeConfigState] =
+    useState<ThemeConfig>(loadThemeConfig);
+
+  const setThemeConfig = useCallback((partial: Partial<ThemeConfig>) => {
+    setThemeConfigState((prev) => {
+      const next = { ...prev, ...partial };
+      saveThemeConfig(next);
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (themeConfig.darkMode) {
+      root.classList.add("dark");
+    } else {
+      root.classList.remove("dark");
+    }
+
+    const appThemeVars: Record<string, string> = {
+      "--color-primary": appTheme.colorPrimary,
+      "--color-primary-hover": appTheme.colorPrimaryHover,
+      "--color-primary-active": appTheme.colorPrimaryActive,
+      "--color-primary-border": appTheme.colorPrimaryBorder,
+      "--color-primary-bg": themeConfig.darkMode
+        ? `color-mix(in srgb, ${appTheme.colorPrimary} 22%, transparent)`
+        : appTheme.colorPrimaryBg,
+      "--color-success": appTheme.colorSuccess,
+      "--color-success-hover": appTheme.colorSuccessHover,
+      "--color-success-active": appTheme.colorSuccessActive,
+      "--color-success-border": themeConfig.darkMode
+        ? `color-mix(in srgb, ${appTheme.colorSuccess} 38%, transparent)`
+        : appTheme.colorSuccessBorder,
+      "--color-success-bg": themeConfig.darkMode
+        ? `color-mix(in srgb, ${appTheme.colorSuccess} 18%, transparent)`
+        : appTheme.colorSuccessBg,
+      "--color-warning": appTheme.colorWarning,
+      "--color-warning-hover": appTheme.colorWarningHover,
+      "--color-warning-active": appTheme.colorWarningActive,
+      "--color-warning-border": themeConfig.darkMode
+        ? `color-mix(in srgb, ${appTheme.colorWarning} 38%, transparent)`
+        : appTheme.colorWarningBorder,
+      "--color-warning-bg": themeConfig.darkMode
+        ? `color-mix(in srgb, ${appTheme.colorWarning} 18%, transparent)`
+        : appTheme.colorWarningBg,
+      "--color-error": appTheme.colorError,
+      "--color-error-hover": appTheme.colorErrorHover,
+      "--color-error-active": appTheme.colorErrorActive,
+      "--color-error-border": themeConfig.darkMode
+        ? `color-mix(in srgb, ${appTheme.colorError} 38%, transparent)`
+        : appTheme.colorErrorBorder,
+      "--color-error-bg": themeConfig.darkMode
+        ? `color-mix(in srgb, ${appTheme.colorError} 18%, transparent)`
+        : appTheme.colorErrorBg,
+      "--color-info": appTheme.colorInfo,
+      "--color-info-hover": appTheme.colorInfoHover,
+      "--color-info-active": appTheme.colorInfoActive,
+      "--color-info-border": themeConfig.darkMode
+        ? `color-mix(in srgb, ${appTheme.colorInfo} 38%, transparent)`
+        : appTheme.colorInfoBorder,
+      "--color-info-bg": themeConfig.darkMode
+        ? `color-mix(in srgb, ${appTheme.colorInfo} 18%, transparent)`
+        : appTheme.colorInfoBg,
+    };
+
+    Object.entries(appThemeVars).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+
+    const modeVars = themeConfig.darkMode ? DARK_CSS_VARS : LIGHT_CSS_VARS;
+    Object.entries(modeVars).forEach(([key, value]) => {
+      root.style.setProperty(key, value);
+    });
+  }, [themeConfig.darkMode]);
+
+  const antdThemeConfig = useMemo(
+    () => ({
+      algorithm: themeConfig.darkMode
+        ? antdTheme.darkAlgorithm
+        : antdTheme.defaultAlgorithm,
+      token: {
+        colorPrimary: appTheme.colorPrimary,
+        colorPrimaryHover: appTheme.colorPrimaryHover,
+        colorPrimaryActive: appTheme.colorPrimaryActive,
+        colorPrimaryBg: appTheme.colorPrimaryBg,
+        colorPrimaryBorder: appTheme.colorPrimaryBorder,
+        colorSuccess: appTheme.colorSuccess,
+        colorSuccessHover: appTheme.colorSuccessHover,
+        colorSuccessActive: appTheme.colorSuccessActive,
+        colorSuccessBg: appTheme.colorSuccessBg,
+        colorSuccessBorder: appTheme.colorSuccessBorder,
+        colorWarning: appTheme.colorWarning,
+        colorWarningHover: appTheme.colorWarningHover,
+        colorWarningActive: appTheme.colorWarningActive,
+        colorWarningBg: appTheme.colorWarningBg,
+        colorWarningBorder: appTheme.colorWarningBorder,
+        colorError: appTheme.colorError,
+        colorErrorHover: appTheme.colorErrorHover,
+        colorErrorActive: appTheme.colorErrorActive,
+        colorErrorBg: appTheme.colorErrorBg,
+        colorErrorBorder: appTheme.colorErrorBorder,
+        colorInfo: appTheme.colorInfo,
+        colorInfoHover: appTheme.colorInfoHover,
+        colorInfoActive: appTheme.colorInfoActive,
+        colorInfoBg: appTheme.colorInfoBg,
+        colorInfoBorder: appTheme.colorInfoBorder,
+        borderRadius: appTheme.borderRadius,
+      },
+    }),
+    [themeConfig.darkMode]
+  );
+
+  const contextValue = useMemo(
+    () => ({ themeConfig, setThemeConfig }),
+    [themeConfig, setThemeConfig]
+  );
+
+  return (
+    <ThemeContext.Provider value={contextValue}>
+      <ConfigProvider theme={antdThemeConfig}>{children}</ConfigProvider>
+    </ThemeContext.Provider>
+  );
+};
+
+export function useTheme(): ThemeContextValue {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) {
+    return {
+      themeConfig: defaultThemeConfig,
+      setThemeConfig: () => {},
+    };
+  }
+  return ctx;
+}

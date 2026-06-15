@@ -1,8 +1,9 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Lock, User } from "lucide-react";
-import { login } from "@/api/login";
+import { authService } from "@/core/services/authService";
 import { setToken } from "@/utils/auth";
+import { appConfig } from "@/config/app";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ const LoginPage: React.FC = () => {
     setError("");
 
     try {
-      const res = await login({
+      const res = await authService.login({
         username: formData.username,
         password: formData.password,
       });
@@ -49,7 +50,7 @@ const LoginPage: React.FC = () => {
       const tokenData = res.data;
       
       setToken(tokenData);
-      navigate("/");
+      navigate(appConfig.defaultRoute);
     } catch (err: any) {
       setLoading(false);
       // 如果错误是字符串则显示，否则控制台打印
@@ -59,33 +60,33 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-theme-bg-base flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         {/* Logo和标题 */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-theme-primary rounded-full flex items-center justify-center mx-auto mb-4">
             <Lock className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            芋道react
+          <h1 className="text-2xl font-bold text-theme-text mb-2">
+            {appConfig.name}
           </h1>
-          <p className="text-gray-600">请登录您的账户以继续</p>
+          <p className="text-theme-text-secondary">请登录您的账户以继续</p>
         </div>
 
         {/* 登录表单 */}
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-theme-bg rounded-lg shadow-lg border border-theme-border p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* 用户名输入 */}
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-theme-text-secondary mb-2"
               >
                 用户名
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <User className="h-5 w-5 text-theme-text-tertiary" />
                 </div>
                 <input
                   id="username"
@@ -94,7 +95,7 @@ const LoginPage: React.FC = () => {
                   required
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full pl-10 pr-3 py-2 border border-theme-border rounded-md shadow-sm placeholder:text-theme-text-tertiary focus:outline-none focus:ring-theme-primary focus:border-theme-primary bg-theme-bg text-theme-text"
                   placeholder="请输入用户名"
                   disabled={loading}
                 />
@@ -105,13 +106,13 @@ const LoginPage: React.FC = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-theme-text-secondary mb-2"
               >
                 密码
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
+                  <Lock className="h-5 w-5 text-theme-text-tertiary" />
                 </div>
                 <input
                   id="password"
@@ -120,7 +121,7 @@ const LoginPage: React.FC = () => {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full pl-10 pr-10 py-2 border border-theme-border rounded-md shadow-sm placeholder:text-theme-text-tertiary focus:outline-none focus:ring-theme-primary focus:border-theme-primary bg-theme-bg text-theme-text"
                   placeholder="请输入密码"
                   disabled={loading}
                 />
@@ -131,9 +132,9 @@ const LoginPage: React.FC = () => {
                   disabled={loading}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                    <EyeOff className="h-5 w-5 text-theme-text-tertiary hover:text-theme-text-secondary" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+                    <Eye className="h-5 w-5 text-theme-text-tertiary hover:text-theme-text-secondary" />
                   )}
                 </button>
               </div>
@@ -141,8 +142,8 @@ const LoginPage: React.FC = () => {
 
             {/* 错误信息 */}
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-3">
-                <div className="text-sm text-red-600">{error}</div>
+              <div className="bg-theme-error-bg border border-theme-error-border rounded-md p-3">
+                <div className="text-sm text-theme-error">{error}</div>
               </div>
             )}
 
@@ -150,7 +151,7 @@ const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-theme-primary hover:bg-theme-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-theme-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="flex items-center">
@@ -165,8 +166,8 @@ const LoginPage: React.FC = () => {
         </div>
 
         {/* 底部信息 */}
-        <div className="mt-8 text-center text-sm text-gray-500">
-          © 2026 芋道react
+        <div className="mt-8 text-center text-sm text-theme-text-tertiary">
+          {appConfig.copyright}
         </div>
       </div>
     </div>

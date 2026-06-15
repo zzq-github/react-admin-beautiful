@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+﻿import React, { useCallback, useMemo, useRef, useState } from "react";
 import { renderUserColumns } from "./schema/tableColumns";
 import { renderUserQueryFields } from "./schema/queryFields";
 import QueryFilter from "@/components/QueryFilter";
@@ -49,8 +49,8 @@ const UserManagement: React.FC = () => {
       />
       <div className="flex gap-6">
         <div className="w-64 flex-shrink-0">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <div className="font-medium text-gray-700 mb-3">部门筛选</div>
+          <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-4">
+            <div className="font-medium text-gray-700 dark:text-gray-300 mb-3">部门筛选</div>
             <Tree
               treeData={deptTreeNodeData}
               selectedKeys={selectedDeptId ? [selectedDeptId] : []}
@@ -60,7 +60,7 @@ const UserManagement: React.FC = () => {
           </div>
         </div>
         <div className="flex-1">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
             <div className="flex flex-col space-y-4">
               <QueryFilter
                 fields={renderUserQueryFields({

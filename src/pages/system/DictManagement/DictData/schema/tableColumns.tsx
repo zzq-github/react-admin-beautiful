@@ -54,7 +54,7 @@ export const renderDictTypeColumns = ({ EditAction, DeleteAction }) => {
         render: (_: any, record: DictDataRespVO) => (
           <div className="flex gap-3">
             <a
-              className="text-blue-600 cursor-pointer"
+              className="text-theme-primary cursor-pointer"
               onClick={() => EditAction(record)}
             >
               修改
@@ -67,7 +67,7 @@ export const renderDictTypeColumns = ({ EditAction, DeleteAction }) => {
               okText="是"
               cancelText="否"
             >
-              <a className="text-red-600 cursor-pointer">删除</a>
+              <a className="text-theme-error cursor-pointer">删除</a>
             </Popconfirm>
           </div>
         ),

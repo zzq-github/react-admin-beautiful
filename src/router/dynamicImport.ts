@@ -8,7 +8,14 @@
  * 预扫描 pages 目录下所有的页面入口文件
  * Vite 的类型定义：Record<string, () => Promise<any>>
  */
-const allModules = import.meta.glob("../pages/**/*.{jsx,tsx}");
+const allModules = import.meta.glob([
+  "../pages/**/index.{jsx,tsx}",
+  "../pages/*.{jsx,tsx}",
+  "!../pages/Dashboard/index.{jsx,tsx}",
+  "!../pages/LoginPage/index.{jsx,tsx}",
+  "!../pages/NotFoundPage/index.{jsx,tsx}",
+  "!../pages/user/NotifyMessage/index.{jsx,tsx}",
+]);
 
 /**
  * 统一的动态导入函数

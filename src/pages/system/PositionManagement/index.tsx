@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import QueryFilter from "@/components/QueryFilter";
 import BaseTable from "@/components/BaseTable";
 import EditPositonModal from "@/components/FormModal";
@@ -33,7 +33,7 @@ const PositionManagement: React.FC = () => {
           },
         ]}
       />
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
         <div className="flex flex-col space-y-4">
           <QueryFilter
             fields={renderPositionQueryFields({})}

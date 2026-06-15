@@ -3,18 +3,11 @@ import axios, {
   InternalAxiosRequestConfig,
   AxiosResponse,
 } from "axios";
-import {
-  getAccessToken,
-  getRefreshToken,
-  getTenantId,
-  setToken,
-  getVisitTenantId,
-} from "@/utils/auth";
+import { getAccessToken, getRefreshToken, setToken } from "@/utils/auth";
 import errorCode from "@/utils/errorCode";
-import { getTenantEnable } from "@/utils/ruoyi";
-import { refreshToken } from "@/api/login";
-import { ApiEncrypt } from "@/utils/encrypt";
 import { message, Modal } from "antd";
+import { apiProtocol } from "@/core/adapters/protocol";
+import { appConfig } from "@/config/app";
 
 // 需要忽略的提示
 const ignoreMsgs: string[] = ["无效的刷新令牌", "刷新令牌已过期"];
@@ -27,9 +20,16 @@ let requestList: RequestCallback[] = [];
 // 是否正在刷新中
 let isRefreshToken = false;
 
-// 创建axios实例
+/**
+ * API 基础配置
+ * 通过 appConfig 统一读取 VITE_BASE_API 和 VITE_API_PREFIX
+ */
+const API_BASE_URL = appConfig.apiBaseUrl;
+const API_PREFIX = appConfig.apiPrefix;
+
+// 创建 axios 实例
 const service: AxiosInstance = axios.create({
-  baseURL: (import.meta.env.VITE_BASE_API as string) + "/admin-api/",
+  baseURL: API_BASE_URL + API_PREFIX,
   timeout: 30000,
   withCredentials: false,
 });
@@ -38,28 +38,16 @@ const service: AxiosInstance = axios.create({
 service.defaults.headers.common["Content-Type"] =
   "application/json;charset=utf-8";
 
-// request拦截器
+// 请求拦截器
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // 是否需要设置 token
+    // 注入 Token
     const isToken = config.headers?.isToken === false;
     if (getAccessToken() && !isToken) {
       config.headers["Authorization"] = "Bearer " + getAccessToken();
     }
 
-    // 设置租户
-    if (getTenantEnable()) {
-      const tenantId = getTenantId();
-      if (tenantId) {
-        config.headers["tenant-id"] = tenantId;
-      }
-      const visitTenantId = getVisitTenantId();
-      if (config.headers.Authorization && visitTenantId) {
-        config.headers["visit-tenant-id"] = visitTenantId;
-      }
-    }
-
-    // get请求映射params参数
+    // GET 请求 params 序列化
     if (config.method === "get" && config.params) {
       let url = config.url + "?";
       for (const propName of Object.keys(config.params)) {
@@ -82,24 +70,12 @@ service.interceptors.request.use(
       config.url = url;
     }
 
-    // 是否 API 加密
-    if (config.headers?.isEncrypt) {
-      try {
-        if (config.data) {
-          config.data = ApiEncrypt.encryptRequest(config.data);
-          config.headers[ApiEncrypt.getEncryptHeader()] = "true";
-        }
-      } catch (error) {
-        console.error("请求数据加密失败:", error);
-        throw error;
-      }
-    }
     return config;
   },
   (error: any) => {
     console.log(error);
     return Promise.reject(error);
-  },
+  }
 );
 
 // 响应拦截器
@@ -118,37 +94,22 @@ service.interceptors.response.use(
       data = await new Response(res.data).json();
     }
 
-    // 检查是否需要解密响应数据
-    const encryptHeader = ApiEncrypt.getEncryptHeader();
-    const isEncryptResponse =
-      res.headers[encryptHeader] === "true" ||
-      res.headers[encryptHeader.toLowerCase()] === "true";
-
-    if (isEncryptResponse && typeof data === "string") {
-      try {
-        data = ApiEncrypt.decryptResponse(data);
-        res.data = data;
-      } catch (error: any) {
-        console.error("响应数据解密失败:", error);
-        throw new Error("响应数据解密失败: " + error.message);
-      }
-    }
-
     // 使用全局定义的 ApiResponse 结构
     const responseData = data as ApiResponse;
-    const code = responseData.code || 200;
-    const msg = responseData.msg || errorCode[code] || errorCode["default"];
+    const code = apiProtocol.getCode(responseData);
+    const msg = apiProtocol.getMessage(responseData, errorCode[code] || errorCode["default"]);
 
     if (ignoreMsgs.indexOf(msg) !== -1) {
       return Promise.reject(msg);
-    } else if (code === 401) {
+    } else if (apiProtocol.isUnauthorized(responseData)) {
       if (!isRefreshToken) {
         isRefreshToken = true;
         if (!getRefreshToken()) {
           return handleAuthorized();
         }
         try {
-          const refreshTokenRes = await refreshToken();
+          const { tokenRefreshService } = await import("@/core/services/tokenRefreshService");
+          const refreshTokenRes = await tokenRefreshService.refreshToken();
           setToken(refreshTokenRes.data);
           requestList.forEach((cb) => cb());
           return service(res.config);
@@ -173,13 +134,13 @@ service.interceptors.response.use(
     } else if ([500, 501, 901].includes(code)) {
       message.error({ content: msg });
       return Promise.reject(new Error(msg));
-    } else if (code !== 200) {
+    } else if (!apiProtocol.isSuccess(responseData)) {
       if (msg !== "无效的刷新令牌") {
         message.error({ content: msg });
       }
       return Promise.reject("error");
     } else {
-      return res.data; // 返回 ApiResponse 结构中的 data 部分，或者整个 data，取决于你的业务习惯
+      return res.data;
     }
   },
   (error: any) => {
@@ -197,7 +158,7 @@ service.interceptors.response.use(
       duration: 5,
     });
     return Promise.reject(error);
-  },
+  }
 );
 
 /**
@@ -206,12 +167,7 @@ service.interceptors.response.use(
 export function getBaseHeader(): Record<string, string | undefined> {
   const headers: Record<string, string | undefined> = {
     Authorization: "Bearer " + getAccessToken(),
-    "tenant-id": getTenantId() as string,
   };
-  const visitTenantId = getVisitTenantId();
-  if (getAccessToken() && visitTenantId) {
-    headers["visit-tenant-id"] = visitTenantId;
-  }
   return headers;
 }
 
@@ -228,7 +184,7 @@ function handleAuthorized(): Promise<never> {
       cancelText: "取消",
       onOk() {
         isRelogin.show = false;
-        location.href = `${location.origin}/#/login`;
+        location.href = `${location.origin}/#${appConfig.loginRoute}`;
       },
       onCancel() {
         isRelogin.show = false;

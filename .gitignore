@@ -4,3 +4,5 @@ dist/
 .continue/
 .vscode/
 openai/
+.roo/
+repomix.config.json
