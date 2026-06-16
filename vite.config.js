@@ -24,66 +24,21 @@ function manualChunks(id) {
   }
 
   if (
-    normalizedId.includes("/node_modules/@ant-design/icons") ||
-    normalizedId.includes("/node_modules/@ant-design/icons-svg") ||
     normalizedId.includes("/node_modules/lucide-react/")
   ) {
     return "vendor-icons";
   }
 
-  if (normalizedId.includes("/node_modules/antd/")) {
-    if (
-      normalizedId.includes("/node_modules/antd/es/form") ||
-      normalizedId.includes("/node_modules/antd/es/input") ||
-      normalizedId.includes("/node_modules/antd/es/input-number") ||
-      normalizedId.includes("/node_modules/antd/es/select") ||
-      normalizedId.includes("/node_modules/antd/es/checkbox") ||
-      normalizedId.includes("/node_modules/antd/es/radio") ||
-      normalizedId.includes("/node_modules/antd/es/date-picker") ||
-      normalizedId.includes("/node_modules/antd/es/time-picker") ||
-      normalizedId.includes("/node_modules/antd/es/upload")
-    ) {
-      return "vendor-antd-form";
-    }
-
-    if (
-      normalizedId.includes("/node_modules/antd/es/table") ||
-      normalizedId.includes("/node_modules/antd/es/pagination") ||
-      normalizedId.includes("/node_modules/antd/es/tree") ||
-      normalizedId.includes("/node_modules/antd/es/empty") ||
-      normalizedId.includes("/node_modules/antd/es/tag") ||
-      normalizedId.includes("/node_modules/antd/es/badge") ||
-      normalizedId.includes("/node_modules/antd/es/card") ||
-      normalizedId.includes("/node_modules/antd/es/statistic") ||
-      normalizedId.includes("/node_modules/antd/es/list")
-    ) {
-      return "vendor-antd-data";
-    }
-
-    if (
-      normalizedId.includes("/node_modules/antd/es/modal") ||
-      normalizedId.includes("/node_modules/antd/es/drawer") ||
-      normalizedId.includes("/node_modules/antd/es/dropdown") ||
-      normalizedId.includes("/node_modules/antd/es/popover") ||
-      normalizedId.includes("/node_modules/antd/es/tooltip") ||
-      normalizedId.includes("/node_modules/antd/es/message") ||
-      normalizedId.includes("/node_modules/antd/es/notification")
-    ) {
-      return "vendor-antd-feedback";
-    }
-
-    return "vendor-antd-core";
-  }
-
-  if (normalizedId.includes("/node_modules/@ant-design/")) {
-    return "vendor-antd-core";
-  }
-
+  // AntD, @ant-design and rc packages have deep runtime dependencies.
+  // Keeping them in one chunk avoids production TDZ errors caused by
+  // circular initialization across aggressively split vendor chunks.
   if (
+    normalizedId.includes("/node_modules/antd/") ||
+    normalizedId.includes("/node_modules/@ant-design/") ||
     normalizedId.includes("/node_modules/rc-") ||
     normalizedId.includes("/node_modules/@rc-component/")
   ) {
-    return "vendor-rc";
+    return "vendor-antd";
   }
 
   if (
