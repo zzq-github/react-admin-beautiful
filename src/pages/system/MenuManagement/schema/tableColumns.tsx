@@ -3,7 +3,7 @@ import { getDictDataLabel, DICT_TYPE } from "@/utils/dict";
 import { MenuRespVO } from "@/api/system/menu/types";
 import { useMemo } from "react";
 import { Popconfirm } from "antd";
-import SvgIcon from "@/components/SvgIcon";
+import MenuIcon from "@/components/MenuIcon";
 
 export const MenuColumns = ({ EditAction, DeleteAction }) => {
   return useMemo(
@@ -11,7 +11,7 @@ export const MenuColumns = ({ EditAction, DeleteAction }) => {
       { title: "菜单名称", dataIndex: "name" },
       { title: "图标", dataIndex: "icon" ,
         render: (_: any, record: MenuRespVO) => (
-          record.icon?<SvgIcon iconClass={record.icon} className="w-4 h-4" /> : ''
+          record.icon ? <MenuIcon name={record.icon} /> : ''
         )
       },
       { title: "排序", dataIndex: "sort" },

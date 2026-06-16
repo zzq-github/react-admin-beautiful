@@ -1,18 +1,17 @@
-﻿import React from "react";
+import React from "react";
+import { Button, Space } from "antd";
 import { Database, Plus } from "lucide-react";
 import { useDictStore } from "@/store/useDictStore";
 import QueryFilter from "@/components/QueryFilter";
 import BaseTable from "@/components/BaseTable";
 import DictTypeModal from "@/components/FormModal";
+import PageContainer from "@/components/PageContainer";
+import PagePanel from "@/components/PagePanel";
 import { renderDictTypeColumns } from "./schema/tableColumns";
 import { renderDictTypeQueryFields } from "./schema/queryFields";
 import { renderDictTypeForm } from "./schema/modalForms";
-import PageHeader from "@/components/PageHeader";
 import { useDictManagement } from "./hooks";
 
-/**
- * 字典管理页面组件
- */
 const DictManagement: React.FC = () => {
   const fetchDictDatas = useDictStore((state) => state.fetchDictDatas);
   const isLoading = useDictStore((state) => state.isLoading);
@@ -27,43 +26,42 @@ const DictManagement: React.FC = () => {
   } = useDictManagement();
 
   return (
-    <div className="space-y-6">
-      {/* 页面标题区 */}
-      <PageHeader
-        title="字典管理"
-        description="管理系统中的所有字典配置信息"
-        buttons={[
-          {
-            label: "新增字典类型",
-            icon: "plus" as const,
-            type: "blue" as const,
-            clickFunc: handleAddDictType,
-          },
-          {
-            label: "刷新缓存",
-            icon: "database" as const,
-            type: "green" as const,
-            loading: isLoading,
-            clickFunc: () => fetchDictDatas(),
-          },
-        ]}
-      />
-      <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
-        <div className="flex flex-col space-y-4">
-          <QueryFilter
-            fields={renderDictTypeQueryFields()}
-            onChange={query.onChange}
-            onSearch={() => {
-              table.reload(query.getParams());
-            }}
-            onReset={() => {
-              query.reset();
-              table.reload(query.getParams());
-            }}
-          />
-        </div>
+    <PageContainer
+      title="字典管理"
+      subtitle="管理字典类型和字典数据，适合存放状态、枚举和选项配置。"
+      action={
+        <Space>
+          <Button
+            icon={<Database size={14} />}
+            loading={isLoading}
+            onClick={() => fetchDictDatas()}
+          >
+            刷新缓存
+          </Button>
+          <Button
+            type="primary"
+            icon={<Plus size={14} />}
+            onClick={handleAddDictType}
+          >
+            新增字典类型
+          </Button>
+        </Space>
+      }
+    >
+      <PagePanel>
+        <QueryFilter
+          fields={renderDictTypeQueryFields()}
+          onChange={query.onChange}
+          onSearch={() => {
+            table.reload(query.getParams());
+          }}
+          onReset={() => {
+            query.reset();
+            table.reload(query.getParams());
+          }}
+        />
 
-        <div className="overflow-x-auto mt-4">
+        <div className="overflow-x-auto">
           <BaseTable
             columns={renderDictTypeColumns({
               EditAction: handleEdit,
@@ -74,14 +72,13 @@ const DictManagement: React.FC = () => {
             pagination={table.pagination}
           />
         </div>
-      </div>
+      </PagePanel>
       <DictTypeModal
         ref={modalRef}
         onSuccess={table.reload}
-        // 直接传递一个渲染函数
         renderForm={(form, isEdit) => renderDictTypeForm(isEdit)}
       />
-    </div>
+    </PageContainer>
   );
 };
 

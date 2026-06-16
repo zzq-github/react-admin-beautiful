@@ -1,5 +1,5 @@
 import React from "react";
-import { SettingOutlined } from "@ant-design/icons";
+import { Settings } from "lucide-react";
 import NotificationBell from "./NotificationBell";
 import UserDropdown from "./UserDropdown";
 
@@ -17,7 +17,7 @@ const HeaderActions: React.FC<HeaderActionsProps> = ({ onOpenSettings }) => {
         onClick={onOpenSettings}
         className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-theme-text-secondary hover:text-theme-text hover:bg-theme-hover transition-colors"
       >
-        <SettingOutlined className="text-[18px] leading-none" />
+        <Settings size={18} />
       </button>
       <UserDropdown />
     </div>

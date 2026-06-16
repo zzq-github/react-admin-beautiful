@@ -11,9 +11,9 @@ import {
   Tooltip,
   Popover,
 } from "antd";
-import { QuestionCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import { HelpCircle, Search } from "lucide-react";
 import IconSelect from "@/components/IconSelect";
-import SvgIcon from "@/components/SvgIcon";
+import MenuIcon from "@/components/MenuIcon";
 
 // 假设这些是从外部导入的常量和工具函数
 // import { getDictDatas, DICT_TYPE } from '@/utils/dict';
@@ -77,9 +77,9 @@ export const renderEditMenuForm = ({ form, menuTree }) => {
                   value={selectedIcon} // 这一行其实可以不写，Form.Item 会自动注入 value
                   prefix={
                     selectedIcon ? (
-                      <SvgIcon iconClass={selectedIcon} className="w-4 h-4" />
+                      <MenuIcon name={selectedIcon} />
                     ) : (
-                      <SearchOutlined className="text-gray-400" />
+                      <Search size={16} className="text-theme-text-tertiary" />
                     )
                   }
                 />
@@ -117,7 +117,7 @@ export const renderEditMenuForm = ({ form, menuTree }) => {
                 <span>
                   路由地址&nbsp;
                   <Tooltip title="访问的路由地址，如：`user`。如需外网地址时，则以 `http(s)://` 开头">
-                    <QuestionCircleOutlined />
+                    <HelpCircle size={14} className="inline text-theme-text-tertiary" />
                   </Tooltip>
                 </span>
               }
@@ -137,7 +137,7 @@ export const renderEditMenuForm = ({ form, menuTree }) => {
                 <span>
                   权限字符&nbsp;
                   <Tooltip title="Controller 方法上的权限字符，如：@PreAuthorize(`@ss.hasPermission('system:user:list')`)">
-                    <QuestionCircleOutlined />
+                    <HelpCircle size={14} className="inline text-theme-text-tertiary" />
                   </Tooltip>
                 </span>
               }
@@ -171,7 +171,7 @@ export const renderEditMenuForm = ({ form, menuTree }) => {
               <span>
                 菜单状态&nbsp;
                 <Tooltip title="选择停用时，路由将不会出现在侧边栏，也不能被访问">
-                  <QuestionCircleOutlined />
+                  <HelpCircle size={14} className="inline text-theme-text-tertiary" />
                 </Tooltip>
               </span>
             }
@@ -195,7 +195,7 @@ export const renderEditMenuForm = ({ form, menuTree }) => {
                 <span>
                   是否显示&nbsp;
                   <Tooltip title="选择隐藏时，路由将不会出现在侧边栏，但仍然可以访问">
-                    <QuestionCircleOutlined />
+                    <HelpCircle size={14} className="inline text-theme-text-tertiary" />
                   </Tooltip>
                 </span>
               }
@@ -217,7 +217,7 @@ export const renderEditMenuForm = ({ form, menuTree }) => {
                 <span>
                   总是显示&nbsp;
                   <Tooltip title="选择不是时，当该菜单只有一个子菜单时，不展示自己，直接展示子菜单">
-                    <QuestionCircleOutlined />
+                    <HelpCircle size={14} className="inline text-theme-text-tertiary" />
                   </Tooltip>
                 </span>
               }
@@ -239,7 +239,7 @@ export const renderEditMenuForm = ({ form, menuTree }) => {
                 <span>
                   是否缓存&nbsp;
                   <Tooltip title="选择缓存时，则会被 `keep-alive` 缓存，必须填写「组件名称」字段">
-                    <QuestionCircleOutlined />
+                    <HelpCircle size={14} className="inline text-theme-text-tertiary" />
                   </Tooltip>
                 </span>
               }

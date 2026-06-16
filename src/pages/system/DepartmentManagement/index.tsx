@@ -1,11 +1,13 @@
-﻿import { Plus } from "lucide-react";
+import { Button } from "antd";
+import { Plus } from "lucide-react";
 import QueryFilter from "@/components/QueryFilter";
 import BaseTable from "@/components/BaseTable";
 import EditDepartmentModal from "@/components/FormModal";
+import PageContainer from "@/components/PageContainer";
+import PagePanel from "@/components/PagePanel";
 import { DepartmentColumns } from "./schema/tableColumns";
 import { DepartmentFields } from "./schema/queryFields";
 import { renderEditDepartmentForm } from "./schema/modalForms";
-import PageHeader from "@/components/PageHeader";
 import { useDepartmentManagement } from "./hooks";
 
 const DepartmentManagement = () => {
@@ -21,34 +23,31 @@ const DepartmentManagement = () => {
   } = useDepartmentManagement();
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="部门管理"
-        description="管理组织架构和部门信息"
-        buttons={[
-          {
-            label: "新增部门",
-            icon: "plus" as const,
-            type: "blue" as const,
-            clickFunc: handleAddDepartment,
-          },
-        ]}
-      />
-
-      <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
-        <div className="flex flex-col space-y-4">
-          <QueryFilter
-            fields={DepartmentFields({})}
-            onChange={query.onChange}
-            onSearch={() => {
-              request.fetchData(query.getParams());
-            }}
-            onReset={() => {
-              query.reset();
-              request.fetchData(query.getParams());
-            }}
-          />
-        </div>
+    <PageContainer
+      title="部门管理"
+      subtitle="管理组织架构、部门负责人和上下级关系。"
+      action={
+        <Button
+          type="primary"
+          icon={<Plus size={14} />}
+          onClick={handleAddDepartment}
+        >
+          新增部门
+        </Button>
+      }
+    >
+      <PagePanel>
+        <QueryFilter
+          fields={DepartmentFields({})}
+          onChange={query.onChange}
+          onSearch={() => {
+            request.fetchData(query.getParams());
+          }}
+          onReset={() => {
+            query.reset();
+            request.fetchData(query.getParams());
+          }}
+        />
         <div className="overflow-x-auto">
           <BaseTable
             columns={DepartmentColumns({
@@ -60,20 +59,19 @@ const DepartmentManagement = () => {
             pagination={false}
           />
         </div>
-      </div>
+      </PagePanel>
       <EditDepartmentModal
         width={900}
         ref={modalRef}
         onSuccess={request.fetchData}
-        // 直接传递一个渲染函数
-        renderForm={(form) =>
+        renderForm={() =>
           renderEditDepartmentForm({
             userListData: userList || [],
             departmentTree,
           })
         }
       />
-    </div>
+    </PageContainer>
   );
 };
 

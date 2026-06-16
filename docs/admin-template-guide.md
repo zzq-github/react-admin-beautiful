@@ -29,7 +29,7 @@
 当前 Mock 菜单被组织为：
 
 - `Dashboard`：首页示例。
-- `Examples`：最小学习示例，包含 Basic List 和 Form Demo。
+- `Examples`：最小学习示例，包含 Basic List、Form Demo 和 Theme Tokens。
 - `System Demo`：复杂 CRUD 和权限示例，展示用户、角色、菜单、字典等页面。
 
 新增页面的完整步骤见 `docs/create-page.md`。
@@ -176,4 +176,28 @@ src/theme/appTheme.ts
 --color-info-bg
 ```
 
-运行时设置面板只保留显示模式和布局模式；侧边栏明暗跟随显示模式。品牌色和成功、警告、错误、信息等业务色都通过 `src/theme/appTheme.ts` 自定义。业务组件应优先使用 `theme` 语义变量，例如 `text-theme-success`、`bg-theme-error-bg`、`border-theme-warning-border`，而不是直接写死 `blue-*`、`red-*` 等 Tailwind 颜色。
+运行时设置面板只保留显示模式和布局模式；侧边栏明暗跟随显示模式。品牌色、成功、警告、错误、信息等业务色，以及 Ant Design 全局组件尺寸都通过 `src/theme/appTheme.ts` 自定义。业务组件应优先使用 `theme` 语义变量，例如 `text-theme-success`、`bg-theme-error-bg`、`border-theme-warning-border`，而不是直接写死 `blue-*`、`red-*` 等 Tailwind 颜色。
+
+默认 Ant Design 组件尺寸为：
+
+```ts
+componentSize: "small"
+```
+
+## 图标使用边界
+
+模板只保留两类图标入口，避免在业务代码中混用多套图标系统：
+
+1. 菜单和后端可配置图标使用 `MenuIcon` 线条图标。
+
+   - 图标注册表位于 `src/components/MenuIcon`。
+   - 菜单接口的 `icon` 字段填写注册表名称，例如 `dashboard`、`user`、`table`。
+   - 渲染入口是 `src/components/MenuIcon`，统一使用扁平线条风格。
+   - 菜单管理页的图标选择器也读取同一份注册表。
+
+2. 前端 UI 操作图标使用 `lucide-react`。
+
+   - 页面按钮、登录页、顶部栏操作、设置面板、状态提示等前端写死的图标都使用 lucide。
+   - 不再在业务代码中直接使用 `@ant-design/icons`。
+
+`MenuIcon` 会对菜单图标做存在性校验。如果后端返回的图标名不存在，会回退到 `dashboard`，避免菜单出现空图标。

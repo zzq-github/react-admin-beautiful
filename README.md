@@ -18,7 +18,7 @@
 默认 Mock 菜单分为三部分：
 
 - `Dashboard`：首页示例
-- `Examples`：最小学习示例，包含 Basic List 和 Form Demo
+- `Examples`：最小学习示例，包含 Basic List、Form Demo 和 Theme Tokens
 - `System Demo`：复杂 CRUD 和权限示例，展示用户、角色、菜单等管理页面
 
 新增页面可以参考 [创建页面指南](./docs/create-page.md)。
@@ -159,6 +159,7 @@ src/
 - `colorInfo`
 - 各状态的 hover、active、bg、border 色
 - `borderRadius`
+- `componentSize`：Ant Design 全局组件尺寸，默认 `small`
 
 这些配置会同步到 Ant Design token、CSS 变量和 Tailwind 语义类，例如：
 

@@ -22,8 +22,10 @@ export default {
         // 主题驱动的语义颜色（由 CSS 变量控制，暗色模式自动切换）
         theme: {
           bg: 'var(--color-bg-container)',
+          'bg-container': 'var(--color-bg-container)',
           'bg-base': 'var(--color-bg-base)',
           'bg-elevated': 'var(--color-bg-elevated)',
+          'bg-spotlight': 'var(--color-bg-spotlight)',
           'header-bg': 'var(--color-header-bg)',
           'sidebar-bg': 'var(--color-sidebar-bg)',
           'sidebar-border': 'var(--color-sidebar-border)',

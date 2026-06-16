@@ -128,3 +128,83 @@
   border-radius: 8px !important;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
 }
+
+/* App menu styles */
+.app-sidebar-menu.ant-menu,
+.app-top-menu.ant-menu {
+  border-inline-end: 0 !important;
+  background: transparent !important;
+  color: var(--color-sidebar-text);
+}
+
+.app-sidebar-menu .ant-menu-item-icon,
+.app-sidebar-menu .ant-menu-submenu-title .ant-menu-item-icon,
+.app-top-menu .ant-menu-item-icon,
+.app-top-menu .ant-menu-submenu-title .ant-menu-item-icon,
+.menu-line-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+}
+
+.app-sidebar-menu.ant-menu-inline-collapsed {
+  width: 100%;
+}
+
+.app-sidebar-menu .ant-menu-item,
+.app-sidebar-menu .ant-menu-submenu-title {
+  color: var(--color-sidebar-text) !important;
+  border-radius: 8px !important;
+  margin-inline: 0 !important;
+  width: 100% !important;
+}
+
+.app-sidebar-menu .ant-menu-item:hover,
+.app-sidebar-menu .ant-menu-submenu-title:hover {
+  color: var(--color-text) !important;
+  background: var(--color-sidebar-hover-bg) !important;
+}
+
+.app-sidebar-menu .ant-menu-item-selected {
+  color: var(--color-sidebar-text-active) !important;
+  background: var(--color-sidebar-active-bg) !important;
+  font-weight: 500;
+}
+
+.app-sidebar-menu .ant-menu-submenu-selected > .ant-menu-submenu-title {
+  color: var(--color-sidebar-text-active) !important;
+}
+
+.app-sidebar-menu .ant-menu-sub {
+  background: transparent !important;
+}
+
+.app-top-menu.ant-menu {
+  border-bottom: 0 !important;
+  line-height: 36px;
+  color: var(--color-text-secondary);
+}
+
+.app-top-menu .ant-menu-item,
+.app-top-menu .ant-menu-submenu {
+  border-radius: 8px;
+}
+
+.app-top-menu .ant-menu-item::after,
+.app-top-menu .ant-menu-submenu::after {
+  display: none;
+}
+
+.app-top-menu .ant-menu-item:hover,
+.app-top-menu .ant-menu-submenu-title:hover {
+  color: var(--color-text) !important;
+  background: var(--color-hover-bg) !important;
+}
+
+.app-top-menu .ant-menu-item-selected,
+.app-top-menu .ant-menu-submenu-selected {
+  color: var(--color-primary) !important;
+  background: var(--color-primary-bg) !important;
+  font-weight: 500;
+}

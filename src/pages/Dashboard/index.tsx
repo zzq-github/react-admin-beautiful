@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, Col, Row, Statistic } from 'antd';
-import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
-import { Users, FileText, Eye, ShoppingCart } from 'lucide-react';
+import { ArrowDown, ArrowUp, Users, FileText, Eye, ShoppingCart } from 'lucide-react';
 import PageContainer from '@/components/PageContainer';
 
 const Dashboard: React.FC = () => {
@@ -16,7 +15,7 @@ const Dashboard: React.FC = () => {
               prefix={<Users size={18} className="text-theme-primary" />}
               suffix={
                 <span className="text-xs text-theme-success">
-                  <ArrowUpOutlined /> 12%
+                  <ArrowUp size={12} className="inline" /> 12%
                 </span>
               }
             />
@@ -30,7 +29,7 @@ const Dashboard: React.FC = () => {
               prefix={<ShoppingCart size={18} className="text-theme-success" />}
               suffix={
                 <span className="text-xs text-theme-success">
-                  <ArrowUpOutlined /> 8%
+                  <ArrowUp size={12} className="inline" /> 8%
                 </span>
               }
             />
@@ -44,7 +43,7 @@ const Dashboard: React.FC = () => {
               prefix={<Eye size={18} className="text-theme-warning" />}
               suffix={
                 <span className="text-xs text-theme-error">
-                  <ArrowDownOutlined /> 3%
+                  <ArrowDown size={12} className="inline" /> 3%
                 </span>
               }
             />
@@ -58,7 +57,7 @@ const Dashboard: React.FC = () => {
               prefix={<FileText size={18} className="text-theme-info" />}
               suffix={
                 <span className="text-xs text-theme-success">
-                  <ArrowUpOutlined /> 25%
+                  <ArrowUp size={12} className="inline" /> 25%
                 </span>
               }
             />

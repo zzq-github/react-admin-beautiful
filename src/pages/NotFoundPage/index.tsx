@@ -1,7 +1,7 @@
 import React from 'react';
 import { Result, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { HomeOutlined } from '@ant-design/icons';
+import { Home } from 'lucide-react';
 
 const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const NotFoundPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="flex min-h-screen items-center justify-center bg-theme-bg-base">
       <Result
         status="404"
         title="404"
@@ -19,9 +19,8 @@ const NotFoundPage: React.FC = () => {
         extra={
           <Button
             type="primary"
-            icon={<HomeOutlined />}
+            icon={<Home size={16} />}
             onClick={handleBackHome}
-            size="large"
           >
             返回首页
           </Button>

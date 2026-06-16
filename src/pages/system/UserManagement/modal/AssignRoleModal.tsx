@@ -77,7 +77,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       {(record: UserRespVO) => (
         <Spin spinning={loadingRoles}>
           <div className="py-4">
-            <div className="mb-4 text-gray-600">
+            <div className="mb-4 text-theme-text-secondary">
               为用户 <span className="font-semibold">{record?.nickname}</span> (
               {record?.username}) 分配角色
             </div>
@@ -107,11 +107,11 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
                     <Checkbox
                       key={role.id}
                       value={role.id}
-                      className="py-1 hover:bg-gray-50 rounded px-2"
+                      className="rounded px-2 py-1 hover:bg-theme-hover"
                     >
                       <div className="flex flex-col">
-                        <span className="font-medium">{role.name}</span>
-                        <span className="text-gray-500 text-sm">
+                        <span className="font-medium text-theme-text">{role.name}</span>
+                        <span className="text-sm text-theme-text-tertiary">
                           {role.code}
                         </span>
                       </div>
@@ -127,7 +127,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
               )}
               {!roleListRes.loading &&
                 (!roleListRes.data || roleListRes.data.length === 0) && (
-                  <div className="text-center py-4 text-gray-500">
+                  <div className="py-4 text-center text-theme-text-tertiary">
                     暂无角色数据
                   </div>
                 )}

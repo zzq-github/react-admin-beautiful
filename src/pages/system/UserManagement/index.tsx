@@ -1,12 +1,14 @@
-﻿import React, { useCallback, useMemo, useRef, useState } from "react";
+import React from "react";
+import { Button, Tree } from "antd";
+import { Plus } from "lucide-react";
 import { renderUserColumns } from "./schema/tableColumns";
 import { renderUserQueryFields } from "./schema/queryFields";
 import QueryFilter from "@/components/QueryFilter";
 import BaseTable from "@/components/BaseTable";
 import EditUserModal from "@/components/FormModal";
 import { renderUserForm, renderPasswordForm } from "./schema/modalForms";
-import PageHeader from "@/components/PageHeader";
-import {  Tree } from "antd";
+import PageContainer from "@/components/PageContainer";
+import PagePanel from "@/components/PagePanel";
 import AssignRoleModal from "./modal/AssignRoleModal";
 import { useUserManagement } from "./hooks";
 
@@ -31,70 +33,61 @@ const UserManagement: React.FC = () => {
     handleAddUser,
   } = useUserManagement();
 
-  // 其余部分保持不变
   return (
-    <div className="space-y-6">
-      {/* 页面标题区 */}
-      <PageHeader
-        title="用户管理"
-        description="管理系统中的所有用户信息"
-        buttons={[
-          {
-            label: "新增用户",
-            icon: "plus" as const,
-            type: "blue" as const,
-            clickFunc: handleAddUser,
-          },
-        ]}
-      />
-      <div className="flex gap-6">
-        <div className="w-64 flex-shrink-0">
-          <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-4">
-            <div className="font-medium text-gray-700 dark:text-gray-300 mb-3">部门筛选</div>
+    <PageContainer
+      title="用户管理"
+      subtitle="管理系统用户账号、部门归属、岗位和角色授权。"
+      action={
+        <Button type="primary" icon={<Plus size={14} />} onClick={handleAddUser}>
+          新增用户
+        </Button>
+      }
+    >
+      <div className="flex flex-col gap-4 xl:flex-row">
+        <div className="w-full xl:w-64 xl:flex-shrink-0">
+          <PagePanel title="部门筛选" bodyClassName="p-3">
             <Tree
               treeData={deptTreeNodeData}
               selectedKeys={selectedDeptId ? [selectedDeptId] : []}
               onSelect={handleTreeSelect}
               defaultExpandAll
             />
-          </div>
+          </PagePanel>
         </div>
-        <div className="flex-1">
-          <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
-            <div className="flex flex-col space-y-4">
-              <QueryFilter
-                fields={renderUserQueryFields({
-                     positionList: positionRequest.data || [],
-                })}
-                onChange={query.onChange}
-                onSearch={() => {
-                  table.reload(query.getParams());
-                }}
-                onReset={() => {
-                  query.reset();
-                  setSelectedDeptId(undefined);
-                  table.reload(query.getParams());
-                }}
-              />
-            </div>
 
-            <div className="overflow-x-auto mt-4">
-              <BaseTable
-                columns={renderUserColumns({
-                  EditAction: handleEdit,
-                  DeleteAction: handleDelete,
-                  StatusAction: handleStatusChange,
-                  PasswordAction: handlePasswordChange,
-                  AssignRoleAction: handleAssignRole,
-                })}
-                dataSource={table.data}
-                loading={table.loading}
-                pagination={table.pagination}
-              />
-            </div>
+        <PagePanel className="min-w-0 flex-1">
+          <QueryFilter
+            fields={renderUserQueryFields({
+              positionList: positionRequest.data || [],
+            })}
+            onChange={query.onChange}
+            onSearch={() => {
+              table.reload(query.getParams());
+            }}
+            onReset={() => {
+              query.reset();
+              setSelectedDeptId(undefined);
+              table.reload(query.getParams());
+            }}
+          />
+
+          <div className="overflow-x-auto">
+            <BaseTable
+              columns={renderUserColumns({
+                EditAction: handleEdit,
+                DeleteAction: handleDelete,
+                StatusAction: handleStatusChange,
+                PasswordAction: handlePasswordChange,
+                AssignRoleAction: handleAssignRole,
+              })}
+              dataSource={table.data}
+              loading={table.loading}
+              pagination={table.pagination}
+            />
           </div>
-        </div>
+        </PagePanel>
       </div>
+
       <EditUserModal
         ref={modalRef}
         onSuccess={table.reload}
@@ -116,7 +109,7 @@ const UserManagement: React.FC = () => {
         assignRoleModalRef={assignRoleModalRef}
         refreshTable={table.reload}
       />
-    </div>
+    </PageContainer>
   );
 };
 

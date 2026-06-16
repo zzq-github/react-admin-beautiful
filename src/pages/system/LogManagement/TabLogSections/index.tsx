@@ -1,48 +1,44 @@
 import React, { useState } from "react";
-// 注意：在 TSX 中引用其他组件时，通常省略扩展名或使用 .tsx
+import PagePanel from "@/components/PagePanel";
 import LoginLogSection from "./LoginLogSection";
 import OperationLogSection from "./OperationLogSection";
 
-// 定义 Tab 的类型，增强代码健壮性
 type TabType = "operation" | "login";
 
+const tabs: Array<{ key: TabType; label: string }> = [
+  { key: "operation", label: "操作日志" },
+  { key: "login", label: "登录日志" },
+];
+
 const TabLogSections: React.FC = () => {
-  // 使用泛型限定 state 的类型
   const [activeTab, setActiveTab] = useState<TabType>("operation");
 
   return (
-    <div className="bg-theme-bg rounded-lg shadow-sm">
-      <div className="border-b border-theme-border">
-        <nav className="flex space-x-8 px-6">
-          <button
-            onClick={() => setActiveTab("operation")}
-            className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === "operation"
-                ? "border-theme-primary text-theme-primary"
-                : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-            }`}
-          >
-            操作日志
-          </button>
-          <button
-            onClick={() => setActiveTab("login")}
-            className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === "login"
-                ? "border-theme-primary text-theme-primary"
-                : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-            }`}
-          >
-            登录日志
-          </button>
+    <PagePanel bodyClassName="p-0">
+      <div className="border-b border-theme-border-secondary px-4">
+        <nav className="flex gap-6">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveTab(tab.key)}
+              className={`border-b-2 px-1 py-3 text-sm font-medium transition-colors ${
+                activeTab === tab.key
+                  ? "border-theme-primary text-theme-primary"
+                  : "border-transparent text-theme-text-secondary hover:text-theme-text"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
         </nav>
       </div>
-            
-      {/* 内容区域 */}
-      <div className="p-6">
+
+      <div className="p-4">
         {activeTab === "login" && <LoginLogSection />}
         {activeTab === "operation" && <OperationLogSection />}
       </div>
-    </div>
+    </PagePanel>
   );
 };
 

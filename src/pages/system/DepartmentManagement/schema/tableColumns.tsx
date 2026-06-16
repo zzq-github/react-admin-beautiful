@@ -3,7 +3,6 @@ import { getDictDataLabel, DICT_TYPE } from "@/utils/dict";
 
 import { useMemo } from "react";
 import { Popconfirm } from "antd";
-import SvgIcon from "@/components/SvgIcon";
 import { DeptRespVO } from "@/api/system/department/types";
 
 export const DepartmentColumns = ({ EditAction, DeleteAction }) => {

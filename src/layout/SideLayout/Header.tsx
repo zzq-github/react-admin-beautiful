@@ -1,5 +1,5 @@
 import React from "react";
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import HeaderActions from "@/layout/components/HeaderActions";
 
 interface SideHeaderProps {
@@ -23,7 +23,7 @@ const SideHeader: React.FC<SideHeaderProps> = ({
             aria-label={collapsed ? "展开菜单" : "折叠菜单"}
             className="p-1.5 rounded-lg transition-colors text-theme-text-secondary hover:bg-theme-hover hover:text-theme-text"
           >
-            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
           </button>
         </div>
 

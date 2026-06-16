@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import zhCN from 'antd/locale/zh_CN';
 import { ConfigProvider } from 'antd';
 import dayjs from 'dayjs';
-import 'virtual:svg-icons-register';
 import { ThemeProvider } from '@/theme';
 import { appConfig } from '@/config/app';
 

@@ -1,4 +1,7 @@
 import React, { useCallback, useRef } from "react";
+import { Button } from "antd";
+import { Plus } from "lucide-react";
+import { useParams } from "react-router-dom";
 import {
   addDictData,
   deleteDictData,
@@ -15,12 +18,9 @@ import { DictDataRespVO } from "@/api/system/dict/types";
 import DictDataModal from "@/components/FormModal";
 import { FormModalRef } from "@/components/FormModal/types";
 import { renderDictDataForm } from "./schema/modalForms";
-import { useParams } from "react-router-dom";
-import PageHeader from "@/components/PageHeader";
+import PageContainer from "@/components/PageContainer";
+import PagePanel from "@/components/PagePanel";
 
-/**
- * 字典数据管理页面组件
- */
 const DictData: React.FC = () => {
   const { dictType } = useParams();
   const modalRef = useRef<FormModalRef>(null);
@@ -46,40 +46,39 @@ const DictData: React.FC = () => {
   }, [table]);
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="字典管理"
-        description="管理系统中的所有字典配置信息"
-        buttons={[
-          {
-            label: "新增字典数据",
-            icon: "plus" as const,
-            type: "blue" as const,
-            clickFunc: () =>
-              modalRef.current?.open({
-                title: "新增字典数据",
-                record: { dictType, status: 0 },
-                api: addDictData,
-              }),
-          },
-        ]}
-      />
-      <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
-        <div className="flex flex-col space-y-4">
-          <QueryFilter
-            fields={renderDictDataQueryFields({})}
-            onChange={query.onChange}
-            onSearch={() => {
-              table.reload(query.getParams());
-            }}
-            onReset={() => {
-              query.reset();
-              table.reload(query.getParams());
-            }}
-          />
-        </div>
+    <PageContainer
+      title="字典数据"
+      subtitle={`管理 ${dictType || "当前字典"} 下的选项值和展示样式。`}
+      action={
+        <Button
+          type="primary"
+          icon={<Plus size={14} />}
+          onClick={() =>
+            modalRef.current?.open({
+              title: "新增字典数据",
+              record: { dictType, status: 0 },
+              api: addDictData,
+            })
+          }
+        >
+          新增字典数据
+        </Button>
+      }
+    >
+      <PagePanel>
+        <QueryFilter
+          fields={renderDictDataQueryFields({})}
+          onChange={query.onChange}
+          onSearch={() => {
+            table.reload(query.getParams());
+          }}
+          onReset={() => {
+            query.reset();
+            table.reload(query.getParams());
+          }}
+        />
 
-        <div className="overflow-x-auto mt-4">
+        <div className="overflow-x-auto">
           <BaseTable
             columns={renderDictTypeColumns({
               EditAction: handleEdit,
@@ -90,13 +89,13 @@ const DictData: React.FC = () => {
             pagination={table.pagination}
           />
         </div>
-      </div>
+      </PagePanel>
       <DictDataModal
         ref={modalRef}
         onSuccess={table.reload}
         renderForm={renderDictDataForm}
       />
-    </div>
+    </PageContainer>
   );
 };
 

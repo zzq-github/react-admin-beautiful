@@ -1,5 +1,8 @@
-﻿import React from "react";
-import PageHeader from "@/components/PageHeader";
+import React from "react";
+import { Button } from "antd";
+import { Plus } from "lucide-react";
+import PageContainer from "@/components/PageContainer";
+import PagePanel from "@/components/PagePanel";
 import QueryFilter from "@/components/QueryFilter";
 import BaseTable from "@/components/BaseTable";
 import FormModal from "@/components/FormModal";
@@ -25,35 +28,28 @@ const RoleManagement: React.FC = () => {
   } = useRoleManagement();
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="角色管理"
-        description="管理系统角色权限和用户分配"
-        buttons={[
-          {
-            label: "新增角色",
-            icon: "plus" as const,
-            type: "blue" as const,
-            clickFunc: handleAddRole,
-          },
-        ]}
-      />
-
-      <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
-        <div className="flex flex-col space-y-4">
-          <QueryFilter
-            fields={renderRoleQueryFields()}
-            onChange={query.onChange}
-            onSearch={() => {
-              table.reload(query.getParams());
-            }}
-            onReset={() => {
-              query.reset();
-              table.reload(query.getParams());
-            }}
-          />
-        </div>
-        <div className="overflow-x-auto mt-4">
+    <PageContainer
+      title="角色管理"
+      subtitle="管理角色、菜单权限和数据权限范围。"
+      action={
+        <Button type="primary" icon={<Plus size={14} />} onClick={handleAddRole}>
+          新增角色
+        </Button>
+      }
+    >
+      <PagePanel>
+        <QueryFilter
+          fields={renderRoleQueryFields()}
+          onChange={query.onChange}
+          onSearch={() => {
+            table.reload(query.getParams());
+          }}
+          onReset={() => {
+            query.reset();
+            table.reload(query.getParams());
+          }}
+        />
+        <div className="overflow-x-auto">
           <BaseTable
             columns={renderRoleColumns({
               EditAction: handleEdit,
@@ -66,7 +62,7 @@ const RoleManagement: React.FC = () => {
             pagination={table.pagination}
           />
         </div>
-      </div>
+      </PagePanel>
       <FormModal
         ref={editRoleModalRef}
         onSuccess={table.reload}
@@ -80,7 +76,7 @@ const RoleManagement: React.FC = () => {
         editDataPermissonModalRef={editDataPermissonModalRef}
         refreshTable={table.reload}
       />
-    </div>
+    </PageContainer>
   );
 };
 

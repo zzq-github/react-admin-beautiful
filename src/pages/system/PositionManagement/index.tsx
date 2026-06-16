@@ -1,11 +1,14 @@
-﻿import React from "react";
+import React from "react";
+import { Button } from "antd";
+import { Plus } from "lucide-react";
 import QueryFilter from "@/components/QueryFilter";
 import BaseTable from "@/components/BaseTable";
 import EditPositonModal from "@/components/FormModal";
+import PageContainer from "@/components/PageContainer";
+import PagePanel from "@/components/PagePanel";
 import { renderPositionColumns } from "./schema/tableColumns";
 import { renderPositionQueryFields } from "./schema/queryFields";
 import { renderPositionForm } from "./schema/modalForms";
-import PageHeader from "@/components/PageHeader";
 import { usePositionManagement } from "./hooks";
 
 const PositionManagement: React.FC = () => {
@@ -19,36 +22,33 @@ const PositionManagement: React.FC = () => {
   } = usePositionManagement();
 
   return (
-    <div className="space-y-6">
-      {/* 页面标题区 */}
-      <PageHeader
-        title="岗位管理"
-        description="管理系统中的所有岗位信息"
-        buttons={[
-          {
-            label: "新增岗位",
-            icon: "plus" as const,
-            type: "blue" as const,
-            clickFunc: handleAddPosition,
-          },
-        ]}
-      />
-      <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
-        <div className="flex flex-col space-y-4">
-          <QueryFilter
-            fields={renderPositionQueryFields({})}
-            onChange={query.onChange}
-            onSearch={() => {
-              table.reload(query.getParams());
-            }}
-            onReset={() => {
-              query.reset();
-              table.reload(query.getParams());
-            }}
-          />
-        </div>
+    <PageContainer
+      title="岗位管理"
+      subtitle="管理岗位编码、排序、状态和岗位说明。"
+      action={
+        <Button
+          type="primary"
+          icon={<Plus size={14} />}
+          onClick={handleAddPosition}
+        >
+          新增岗位
+        </Button>
+      }
+    >
+      <PagePanel>
+        <QueryFilter
+          fields={renderPositionQueryFields({})}
+          onChange={query.onChange}
+          onSearch={() => {
+            table.reload(query.getParams());
+          }}
+          onReset={() => {
+            query.reset();
+            table.reload(query.getParams());
+          }}
+        />
 
-        <div className="overflow-x-auto mt-4">
+        <div className="overflow-x-auto">
           <BaseTable
             columns={renderPositionColumns({
               EditAction: handleEdit,
@@ -59,13 +59,13 @@ const PositionManagement: React.FC = () => {
             pagination={table.pagination}
           />
         </div>
-      </div>
+      </PagePanel>
       <EditPositonModal
         ref={modalRef}
         onSuccess={table.reload}
         renderForm={renderPositionForm}
       />
-    </div>
+    </PageContainer>
   );
 };
 

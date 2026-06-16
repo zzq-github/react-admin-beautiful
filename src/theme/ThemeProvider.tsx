@@ -22,6 +22,42 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+const mixTransparent = (color: string, percent: number) =>
+  `color-mix(in srgb, ${color} ${percent}%, transparent)`;
+
+const getModeAwareColorTokens = (darkMode: boolean) => ({
+  colorPrimaryBg: darkMode
+    ? mixTransparent(appTheme.colorPrimary, 22)
+    : appTheme.colorPrimaryBg,
+  colorPrimaryBorder: darkMode
+    ? mixTransparent(appTheme.colorPrimary, 38)
+    : appTheme.colorPrimaryBorder,
+  colorSuccessBg: darkMode
+    ? mixTransparent(appTheme.colorSuccess, 18)
+    : appTheme.colorSuccessBg,
+  colorSuccessBorder: darkMode
+    ? mixTransparent(appTheme.colorSuccess, 38)
+    : appTheme.colorSuccessBorder,
+  colorWarningBg: darkMode
+    ? mixTransparent(appTheme.colorWarning, 18)
+    : appTheme.colorWarningBg,
+  colorWarningBorder: darkMode
+    ? mixTransparent(appTheme.colorWarning, 38)
+    : appTheme.colorWarningBorder,
+  colorErrorBg: darkMode
+    ? mixTransparent(appTheme.colorError, 18)
+    : appTheme.colorErrorBg,
+  colorErrorBorder: darkMode
+    ? mixTransparent(appTheme.colorError, 38)
+    : appTheme.colorErrorBorder,
+  colorInfoBg: darkMode
+    ? mixTransparent(appTheme.colorInfo, 18)
+    : appTheme.colorInfoBg,
+  colorInfoBorder: darkMode
+    ? mixTransparent(appTheme.colorInfo, 38)
+    : appTheme.colorInfoBorder,
+});
+
 const DARK_CSS_VARS: Record<string, string> = {
   "--color-bg-base": "#141414",
   "--color-bg-container": "#1f1f1f",
@@ -31,7 +67,7 @@ const DARK_CSS_VARS: Record<string, string> = {
   "--color-sidebar-bg": "#1f1f1f",
   "--color-sidebar-border": "#303030",
   "--color-sidebar-hover-bg": "rgba(255, 255, 255, 0.08)",
-  "--color-sidebar-active-bg": `color-mix(in srgb, ${appTheme.colorPrimary} 22%, transparent)`,
+  "--color-sidebar-active-bg": mixTransparent(appTheme.colorPrimary, 22),
   "--color-hover-bg": "rgba(255, 255, 255, 0.08)",
   "--color-border": "#424242",
   "--color-border-secondary": "#303030",
@@ -85,50 +121,33 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       root.classList.remove("dark");
     }
 
+    const colorTokens = getModeAwareColorTokens(themeConfig.darkMode);
     const appThemeVars: Record<string, string> = {
       "--color-primary": appTheme.colorPrimary,
       "--color-primary-hover": appTheme.colorPrimaryHover,
       "--color-primary-active": appTheme.colorPrimaryActive,
-      "--color-primary-border": appTheme.colorPrimaryBorder,
-      "--color-primary-bg": themeConfig.darkMode
-        ? `color-mix(in srgb, ${appTheme.colorPrimary} 22%, transparent)`
-        : appTheme.colorPrimaryBg,
+      "--color-primary-border": colorTokens.colorPrimaryBorder,
+      "--color-primary-bg": colorTokens.colorPrimaryBg,
       "--color-success": appTheme.colorSuccess,
       "--color-success-hover": appTheme.colorSuccessHover,
       "--color-success-active": appTheme.colorSuccessActive,
-      "--color-success-border": themeConfig.darkMode
-        ? `color-mix(in srgb, ${appTheme.colorSuccess} 38%, transparent)`
-        : appTheme.colorSuccessBorder,
-      "--color-success-bg": themeConfig.darkMode
-        ? `color-mix(in srgb, ${appTheme.colorSuccess} 18%, transparent)`
-        : appTheme.colorSuccessBg,
+      "--color-success-border": colorTokens.colorSuccessBorder,
+      "--color-success-bg": colorTokens.colorSuccessBg,
       "--color-warning": appTheme.colorWarning,
       "--color-warning-hover": appTheme.colorWarningHover,
       "--color-warning-active": appTheme.colorWarningActive,
-      "--color-warning-border": themeConfig.darkMode
-        ? `color-mix(in srgb, ${appTheme.colorWarning} 38%, transparent)`
-        : appTheme.colorWarningBorder,
-      "--color-warning-bg": themeConfig.darkMode
-        ? `color-mix(in srgb, ${appTheme.colorWarning} 18%, transparent)`
-        : appTheme.colorWarningBg,
+      "--color-warning-border": colorTokens.colorWarningBorder,
+      "--color-warning-bg": colorTokens.colorWarningBg,
       "--color-error": appTheme.colorError,
       "--color-error-hover": appTheme.colorErrorHover,
       "--color-error-active": appTheme.colorErrorActive,
-      "--color-error-border": themeConfig.darkMode
-        ? `color-mix(in srgb, ${appTheme.colorError} 38%, transparent)`
-        : appTheme.colorErrorBorder,
-      "--color-error-bg": themeConfig.darkMode
-        ? `color-mix(in srgb, ${appTheme.colorError} 18%, transparent)`
-        : appTheme.colorErrorBg,
+      "--color-error-border": colorTokens.colorErrorBorder,
+      "--color-error-bg": colorTokens.colorErrorBg,
       "--color-info": appTheme.colorInfo,
       "--color-info-hover": appTheme.colorInfoHover,
       "--color-info-active": appTheme.colorInfoActive,
-      "--color-info-border": themeConfig.darkMode
-        ? `color-mix(in srgb, ${appTheme.colorInfo} 38%, transparent)`
-        : appTheme.colorInfoBorder,
-      "--color-info-bg": themeConfig.darkMode
-        ? `color-mix(in srgb, ${appTheme.colorInfo} 18%, transparent)`
-        : appTheme.colorInfoBg,
+      "--color-info-border": colorTokens.colorInfoBorder,
+      "--color-info-bg": colorTokens.colorInfoBg,
     };
 
     Object.entries(appThemeVars).forEach(([key, value]) => {
@@ -142,7 +161,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [themeConfig.darkMode]);
 
   const antdThemeConfig = useMemo(
-    () => ({
+    () => {
+      const colorTokens = getModeAwareColorTokens(themeConfig.darkMode);
+
+      return {
       algorithm: themeConfig.darkMode
         ? antdTheme.darkAlgorithm
         : antdTheme.defaultAlgorithm,
@@ -150,31 +172,32 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
         colorPrimary: appTheme.colorPrimary,
         colorPrimaryHover: appTheme.colorPrimaryHover,
         colorPrimaryActive: appTheme.colorPrimaryActive,
-        colorPrimaryBg: appTheme.colorPrimaryBg,
-        colorPrimaryBorder: appTheme.colorPrimaryBorder,
+        colorPrimaryBg: colorTokens.colorPrimaryBg,
+        colorPrimaryBorder: colorTokens.colorPrimaryBorder,
         colorSuccess: appTheme.colorSuccess,
         colorSuccessHover: appTheme.colorSuccessHover,
         colorSuccessActive: appTheme.colorSuccessActive,
-        colorSuccessBg: appTheme.colorSuccessBg,
-        colorSuccessBorder: appTheme.colorSuccessBorder,
+        colorSuccessBg: colorTokens.colorSuccessBg,
+        colorSuccessBorder: colorTokens.colorSuccessBorder,
         colorWarning: appTheme.colorWarning,
         colorWarningHover: appTheme.colorWarningHover,
         colorWarningActive: appTheme.colorWarningActive,
-        colorWarningBg: appTheme.colorWarningBg,
-        colorWarningBorder: appTheme.colorWarningBorder,
+        colorWarningBg: colorTokens.colorWarningBg,
+        colorWarningBorder: colorTokens.colorWarningBorder,
         colorError: appTheme.colorError,
         colorErrorHover: appTheme.colorErrorHover,
         colorErrorActive: appTheme.colorErrorActive,
-        colorErrorBg: appTheme.colorErrorBg,
-        colorErrorBorder: appTheme.colorErrorBorder,
+        colorErrorBg: colorTokens.colorErrorBg,
+        colorErrorBorder: colorTokens.colorErrorBorder,
         colorInfo: appTheme.colorInfo,
         colorInfoHover: appTheme.colorInfoHover,
         colorInfoActive: appTheme.colorInfoActive,
-        colorInfoBg: appTheme.colorInfoBg,
-        colorInfoBorder: appTheme.colorInfoBorder,
+        colorInfoBg: colorTokens.colorInfoBg,
+        colorInfoBorder: colorTokens.colorInfoBorder,
         borderRadius: appTheme.borderRadius,
       },
-    }),
+    };
+    },
     [themeConfig.darkMode]
   );
 
@@ -185,7 +208,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <ThemeContext.Provider value={contextValue}>
-      <ConfigProvider theme={antdThemeConfig}>{children}</ConfigProvider>
+      <ConfigProvider
+        componentSize={appTheme.componentSize}
+        theme={antdThemeConfig}
+      >
+        {children}
+      </ConfigProvider>
     </ThemeContext.Provider>
   );
 };

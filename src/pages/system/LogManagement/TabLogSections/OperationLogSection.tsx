@@ -32,19 +32,17 @@ const OperationLogSection = () => {
 
   return (
     <>
-      <div className="p-6 bg-theme-bg-base border-b border-theme-border">
-        <QueryFilter
-          fields={formatOperationLogFields}
-          onChange={query.onChange}
-          onSearch={() => {
-            table.reload(query.getParams());
-          }}
-          onReset={() => {
-              query.reset();
-            table.reload(query.getParams());
-          }}
-        />
-      </div>
+      <QueryFilter
+        fields={formatOperationLogFields}
+        onChange={query.onChange}
+        onSearch={() => {
+          table.reload(query.getParams());
+        }}
+        onReset={() => {
+          query.reset();
+          table.reload(query.getParams());
+        }}
+      />
       <div className="overflow-x-auto">
         <BaseTable
           columns={OperationLogColumns()}

@@ -1,4 +1,5 @@
 export interface AppTheme {
+  componentSize: "small" | "middle" | "large";
   colorPrimary: string;
   colorPrimaryHover: string;
   colorPrimaryActive: string;
@@ -28,6 +29,7 @@ export interface AppTheme {
 }
 
 export const appTheme: AppTheme = {
+  componentSize: "middle",
   colorPrimary: "#1677ff",
   colorPrimaryHover: "#4096ff",
   colorPrimaryActive: "#0958d9",

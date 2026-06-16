@@ -1,77 +1,9 @@
 import { AdminMenu } from "@/core/types";
 import { MenuItem } from "@/layout/Sidebar/types";
 import { buildFullPath } from "@/utils/route";
-import SvgIcon from "@/components/SvgIcon";
+import MenuIcon from "@/components/MenuIcon";
 import React from "react";
-
-/**
- * 图标名称到 SVG 图标类名的映射表
- * 用于将后端返回的图标字符串转换为对应的 SvgIcon 组件
- */
-const iconMap: Record<string, string> = {
-  // 系统相关图标
-  "system": "system",
-  "home": "home",
-  "dashboard": "dashboard",
-  "user": "user",
-  "users": "peoples",
-  "shield": "shield",
-  "menu": "menu",
-  "building": "building",
-  "briefcase": "briefcase",
-  "book": "book",
-  "sliders": "slider",
-  "bell": "bell",
-  "file-text": "file-text",
-  "globe": "globe",
-  "server": "server",
-  "bar-chart": "chart",
-  "cpu": "cpu",
-  "eye": "eye",
-  "network": "network",
-  "database": "database",
-  "key": "key",
-  "folder-tree": "tree",
-  "list-tree": "tree",
-  "file-code": "code",
-  "message-square": "message",
-  "mail": "email",
-  "search": "search",
-  "download": "download",
-  "upload": "upload",
-  "edit": "edit",
-  "trash": "trash",
-  "plus": "plus",
-  "minus": "minus",
-  "check": "check",
-  "x": "x",
-  "chevron-right": "chevron-right",
-  "chevron-down": "chevron-down",
-  "more-vertical": "more-vertical",
-  "external-link": "external-link",
-  "link": "link",
-  "lock": "lock",
-  "unlock": "unlock",
-  "eye-off": "eye-off",
-  "star": "star",
-  "heart": "heart",
-  "flag": "flag",
-  "zap": "zap",
-  "cloud": "cloud",
-  "terminal": "terminal",
-  "code": "code",
-  "git-branch": "git-branch",
-  "git-pull-request": "git-pull-request",
-  "git-commit": "git-commit",
-  "git-merge": "git-merge",
-  "git-compare": "git-compare",
-  "git-branch-plus": "git-branch-plus",
-  "git-pull-request-closed": "git-pull-request-closed",
-  "git-fork": "git-fork",
-  
-  // 默认图标（当找不到匹配时使用）
-  "default": "dashboard",
-};
+import type { MenuProps } from "antd";
 
 /**
  * 将后端 MenuVO 转换为前端 MenuItem
@@ -88,8 +20,10 @@ export function convertMenuVOToMenuItem(menuVO: AdminMenu, parentPath: string = 
   // 获取图标组件
   let iconComponent: React.ReactElement | undefined;
   if (menuVO.icon) {
-    const iconClass = menuVO.icon || "dashboard";
-    iconComponent = React.createElement(SvgIcon, { iconClass, className: "w-4 h-4" });
+    iconComponent = React.createElement(MenuIcon, {
+      name: menuVO.icon,
+      className: "menu-line-icon",
+    });
   }
 
   // 构建当前菜单的完整路径
@@ -142,5 +76,82 @@ export function convertMenuVOToMenuItems(menuVO: AdminMenu | AdminMenu[] | null)
   return menus
     .map(menu => convertMenuVOToMenuItem(menu))
     .filter((item): item is MenuItem => item !== null);
+}
+
+export type AntdMenuItem = NonNullable<MenuProps["items"]>[number];
+
+export function buildMenuItems(menus: MenuItem[]): MenuProps["items"] {
+  return menus.map((item) => ({
+    key: item.path,
+    icon: item.icon && React.isValidElement(item.icon) ? item.icon : undefined,
+    label: item.label,
+    children: item.children?.length ? buildMenuItems(item.children) : undefined,
+  }));
+}
+
+function normalizePath(path: string): string {
+  if (!path) return "/";
+  if (path.length > 1 && path.endsWith("/")) {
+    return path.slice(0, -1);
+  }
+  return path;
+}
+
+function pathMatches(menuPath: string, pathname: string): boolean {
+  const current = normalizePath(pathname);
+  const target = normalizePath(menuPath);
+  return current === target || current.startsWith(`${target}/`);
+}
+
+export function findSelectedMenuKey(
+  menus: MenuItem[],
+  pathname: string
+): string | undefined {
+  let selectedKey: string | undefined;
+  let selectedLength = -1;
+
+  const walk = (items: MenuItem[]) => {
+    for (const item of items) {
+      const normalizedPath = normalizePath(item.path);
+
+      if (pathMatches(normalizedPath, pathname) && normalizedPath.length > selectedLength) {
+        selectedKey = item.path;
+        selectedLength = normalizedPath.length;
+      }
+
+      if (item.children?.length) {
+        walk(item.children);
+      }
+    }
+  };
+
+  walk(menus);
+  return selectedKey;
+}
+
+export function findOpenMenuKeys(
+  menus: MenuItem[],
+  selectedKey?: string
+): string[] {
+  if (!selectedKey) return [];
+
+  const walk = (items: MenuItem[], parents: string[]): string[] | null => {
+    for (const item of items) {
+      if (item.path === selectedKey) {
+        return parents;
+      }
+
+      if (item.children?.length) {
+        const found = walk(item.children, [...parents, item.path]);
+        if (found) {
+          return found;
+        }
+      }
+    }
+
+    return null;
+  };
+
+  return walk(menus, []) ?? [];
 }
 

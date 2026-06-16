@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Input, Empty } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import SvgIcon from '../SvgIcon';
-import icons from './requireIcons';
+import { Search } from 'lucide-react';
+import MenuIcon from '@/components/MenuIcon';
+import icons from './menuIconNames';
 
 interface IconSelectProps {
   onSelected: (name: string) => void;
@@ -23,7 +23,7 @@ const IconSelect: React.FC<IconSelectProps> = ({ onSelected }) => {
           allowClear
           value={name}
           placeholder="请输入图标名称"
-          prefix={<SearchOutlined className="text-theme-text-tertiary" />}
+          prefix={<Search size={16} className="text-theme-text-tertiary" />}
           onChange={e => setName(e.target.value)}
           className="rounded-md"
         />
@@ -43,9 +43,8 @@ const IconSelect: React.FC<IconSelectProps> = ({ onSelected }) => {
             onClick={() => onSelected(item)}
             className="group flex flex-col items-center justify-center py-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-theme-primary-bg hover:text-theme-primary"
           >
-            {/* 使用 group-hover 实现父级悬浮时图标变色（如果 SvgIcon 支持 color） */}
             <div className="text-2xl mb-1.5 transition-transform duration-200 group-hover:scale-120">
-              <SvgIcon iconClass={item} />
+              <MenuIcon name={item} size={22} />
             </div>
             
             <span className="text-[12px] w-full px-1 text-center truncate text-theme-text-tertiary group-hover:text-theme-primary">

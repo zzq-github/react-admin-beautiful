@@ -143,6 +143,18 @@ function buildMockMenus() {
             type: 2,
             children: [],
           },
+          {
+            id: 203,
+            parentId: 200,
+            name: '主题 Tokens',
+            path: 'theme-tokens',
+            component: 'examples/ThemeTokens/index',
+            icon: 'sliders',
+            visible: true,
+            keepAlive: true,
+            type: 2,
+            children: [],
+          },
         ],
       },
       {

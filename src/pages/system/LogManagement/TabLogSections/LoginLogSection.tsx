@@ -18,19 +18,17 @@ const LoginLogSection: React.FC = () => {
 
   return (
     <>
-      <div className="p-6 bg-theme-bg-base border-b border-theme-border">
-        <QueryFilter
-          fields={LoginLogFields()}
-          onChange={query.onChange}
-          onSearch={() => {
-            table.reload(query.getParams());
-          }}
-          onReset={() => {
-            query.reset();
-            table.reload(query.getParams());
-          }}
-        />
-      </div>
+      <QueryFilter
+        fields={LoginLogFields()}
+        onChange={query.onChange}
+        onSearch={() => {
+          table.reload(query.getParams());
+        }}
+        onReset={() => {
+          query.reset();
+          table.reload(query.getParams());
+        }}
+      />
       <div className="overflow-x-auto">
         <BaseTable
           columns={LoginLogColumns()}

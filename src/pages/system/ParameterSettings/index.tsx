@@ -1,8 +1,11 @@
-﻿import React from "react";
+import React from "react";
+import { Button } from "antd";
+import { Plus } from "lucide-react";
 import QueryFilter from "@/components/QueryFilter";
 import BaseTable from "@/components/BaseTable";
 import EditParameterSettingsModal from "@/components/FormModal";
-import PageHeader from "@/components/PageHeader";
+import PageContainer from "@/components/PageContainer";
+import PagePanel from "@/components/PagePanel";
 import { renderParameterSettingsQueryFields } from "./schema/queryFields";
 import { renderParameterSettingsColumns } from "./schema/tableColumns";
 import { renderParameterSettingsForm } from "./schema/modalForms";
@@ -19,36 +22,33 @@ const ParameterSettings: React.FC = () => {
   } = useParameterSettings();
 
   return (
-    <div className="space-y-6">
-      {/* 页面标题区 */}
-      <PageHeader
-        title="参数设置"
-        description="管理系统参数配置，支持检索、筛选、新增、修改和删除操作"
-        buttons={[
-          {
-            label: "新增参数",
-            icon: "plus" as const,
-            type: "blue" as const,
-            clickFunc: handleAddConfig,
-          },
-        ]}
-      />
-      <div className="bg-theme-bg rounded-lg shadow-sm border border-theme-border p-6">
-        <div className="flex flex-col space-y-4">
-          <QueryFilter
-            fields={renderParameterSettingsQueryFields({})}
-            onChange={query.onChange}
-            onSearch={() => {
-              table.reload(query.getParams());
-            }}
-            onReset={() => {
-              query.reset();
-              table.reload(query.getParams());
-            }}
-          />
-        </div>
+    <PageContainer
+      title="参数设置"
+      subtitle="管理系统参数配置，支持检索、筛选、新增、修改和删除。"
+      action={
+        <Button
+          type="primary"
+          icon={<Plus size={14} />}
+          onClick={handleAddConfig}
+        >
+          新增参数
+        </Button>
+      }
+    >
+      <PagePanel>
+        <QueryFilter
+          fields={renderParameterSettingsQueryFields({})}
+          onChange={query.onChange}
+          onSearch={() => {
+            table.reload(query.getParams());
+          }}
+          onReset={() => {
+            query.reset();
+            table.reload(query.getParams());
+          }}
+        />
 
-        <div className="overflow-x-auto mt-4">
+        <div className="overflow-x-auto">
           <BaseTable
             columns={renderParameterSettingsColumns({
               EditAction: handleEdit,
@@ -59,13 +59,13 @@ const ParameterSettings: React.FC = () => {
             pagination={table.pagination}
           />
         </div>
-      </div>
+      </PagePanel>
       <EditParameterSettingsModal
         ref={modalRef}
         onSuccess={table.reload}
         renderForm={renderParameterSettingsForm}
       />
-    </div>
+    </PageContainer>
   );
 };
 

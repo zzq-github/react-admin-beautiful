@@ -12,7 +12,6 @@
     "get-api-code": "node scripts/generate-api-codegen.js"
   },
   "dependencies": {
-    "@ant-design/icons": "6.x",
     "antd": "^6.1.4",
     "axios": "^1.13.2",
     "crypto-js": "^4.0.0",
@@ -45,7 +44,6 @@
     "tailwindcss": "^3.2.0",
     "typescript": "^5.9.3",
     "vite": "^4.2.0",
-    "vite-plugin-svg-icons": "^2.0.1",
     "yunji-tagger": "^0.0.9"
   }
 }

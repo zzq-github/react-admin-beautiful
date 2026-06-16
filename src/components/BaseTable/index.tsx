@@ -15,7 +15,7 @@ const BaseTable = <T extends Record<string, any>>({
   dataSource = [],
   loading = false,
   pagination = true,
-  size = "middle",
+  size,
   bordered = false,
   scroll,
   emptyText = "暂无数据",
