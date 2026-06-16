@@ -1,6 +1,15 @@
 # React Admin Plus
 
+[![CI](https://github.com/zzq-github/react-admin-beautiful/actions/workflows/ci.yml/badge.svg)](https://github.com/zzq-github/react-admin-beautiful/actions/workflows/ci.yml)
+[![Deploy Pages](https://github.com/zzq-github/react-admin-beautiful/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/zzq-github/react-admin-beautiful/actions/workflows/deploy-pages.yml)
+[![License](https://img.shields.io/github/license/zzq-github/react-admin-beautiful)](./LICENSE)
+![React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-4-646cff?logo=vite&logoColor=white)
+![Ant%20Design](https://img.shields.io/badge/Ant%20Design-6-1677ff?logo=antdesign&logoColor=white)
+
 一个面向开源复用的 React Admin 通用模板。目标是让你 clone 后 5 分钟跑起来，然后用少量配置替换成自己的后台项目。
+
+在线预览：[https://zzq-github.github.io/react-admin-beautiful/](https://zzq-github.github.io/react-admin-beautiful/)
 
 ## 特性
 
@@ -42,9 +51,13 @@ password: admin123
 常用命令：
 
 ```bash
-pnpm dev       # 启动开发环境，默认读取 .env.dev
-pnpm build     # 构建生产版本，默认读取 .env.prod
-pnpm preview   # 预览生产构建产物
+pnpm dev        # 启动开发环境，默认读取 .env.dev
+pnpm typecheck  # TypeScript 类型检查
+pnpm lint       # ESLint 代码检查
+pnpm test       # Vitest 单元测试
+pnpm check      # 本地执行与 CI 相同的核心检查链
+pnpm build      # 构建生产版本，默认读取 .env.prod
+pnpm preview    # 预览生产构建产物
 ```
 
 ## 创建自己的项目
