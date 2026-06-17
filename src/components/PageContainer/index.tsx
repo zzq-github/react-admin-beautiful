@@ -1,63 +1,95 @@
-import React from 'react';
+import React from "react";
 
 interface PageContainerProps {
-  /** 页面标题 */
-  title?: string;
-  /** 页面描述/副标题 */
-  subtitle?: string;
-  /** 操作栏（右侧按钮区） */
+  title?: React.ReactNode;
+  subtitle?: React.ReactNode;
+  description?: React.ReactNode;
+  headerMeta?: React.ReactNode;
   action?: React.ReactNode;
-  /** 底部区域 */
+  extra?: React.ReactNode;
   footer?: React.ReactNode;
+  className?: string;
+  headerClassName?: string;
+  contentClassName?: string;
+  footerClassName?: string;
+  compact?: boolean;
   children: React.ReactNode;
 }
 
-/**
- * 页面容器组件
- * 统一页面结构：标题 + 操作栏 + 内容区 + 底部
- *
- * @example
- * <PageContainer
- *   title="用户管理"
- *   subtitle="管理系统用户账号"
- *   action={<Button type="primary">新增用户</Button>}
- * >
- *   <Table ... />
- * </PageContainer>
- */
+const joinClassNames = (...classNames: Array<string | false | undefined>) =>
+  classNames.filter(Boolean).join(" ");
+
 const PageContainer: React.FC<PageContainerProps> = ({
   title,
   subtitle,
+  description,
+  headerMeta,
   action,
+  extra,
   footer,
+  className,
+  headerClassName,
+  contentClassName,
+  footerClassName,
+  compact = false,
   children,
 }) => {
+  const helperText = description ?? subtitle;
+  const hasHeader = title || helperText || headerMeta || action || extra;
+
   return (
-    <div className="space-y-4">
-      {/* 标题栏 */}
-      {(title || action) && (
-        <div className="flex items-center justify-between">
-          <div>
-            {title && (
-              <h2 className="text-lg font-semibold text-theme-text">
-                {title}
-              </h2>
-            )}
-            {subtitle && (
-              <p className="text-sm text-theme-text-secondary mt-0.5">
-                {subtitle}
-              </p>
-            )}
-          </div>
-          {action && <div className="flex items-center gap-2">{action}</div>}
-        </div>
+    <div
+      className={joinClassNames(
+        "page-container",
+        compact ? "space-y-3" : "space-y-4",
+        className
       )}
+    >
+      {hasHeader ? (
+        <header
+          className={joinClassNames(
+            "page-container-header rounded-xl border border-theme-border-secondary bg-theme-bg-container px-4 py-4 sm:px-5",
+            headerClassName
+          )}
+        >
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0">
+              {headerMeta ? (
+                <div className="mb-2 flex flex-wrap items-center gap-2">
+                  {headerMeta}
+                </div>
+              ) : null}
 
-      {/* 内容区 */}
-      <div>{children}</div>
+              {title ? (
+                <h1 className="truncate text-xl font-semibold leading-tight text-theme-text">
+                  {title}
+                </h1>
+              ) : null}
 
-      {/* 底部区域 */}
-      {footer && <div>{footer}</div>}
+              {helperText ? (
+                <p className="mt-1 max-w-3xl text-sm leading-6 text-theme-text-secondary">
+                  {helperText}
+                </p>
+              ) : null}
+            </div>
+
+            {(action || extra) ? (
+              <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+                {extra}
+                {action}
+              </div>
+            ) : null}
+          </div>
+        </header>
+      ) : null}
+
+      <div className={contentClassName}>{children}</div>
+
+      {footer ? (
+        <footer className={joinClassNames("text-sm", footerClassName)}>
+          {footer}
+        </footer>
+      ) : null}
     </div>
   );
 };

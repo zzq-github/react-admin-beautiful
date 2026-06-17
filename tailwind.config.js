@@ -69,7 +69,17 @@ export default {
       backgroundImage: {
         'gradient-blue': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         'gradient-card': 'linear-gradient(145deg, #ffffff 0%, #f8fafc 100%)'
-      }
+      },
+      transitionDuration: {
+        'motion-fast': 'var(--motion-duration-fast)',
+        'motion-base': 'var(--motion-duration-base)',
+        'motion-slow': 'var(--motion-duration-slow)',
+      },
+      transitionTimingFunction: {
+        'motion-standard': 'var(--motion-ease-standard)',
+        'motion-out': 'var(--motion-ease-out)',
+        'motion-emphasized': 'var(--motion-ease-emphasized)',
+      },
     }
   },
   plugins: [],

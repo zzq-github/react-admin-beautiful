@@ -237,6 +237,8 @@ const BasicList: React.FC = () => {
 
       <PagePanel>
         <QueryFilter
+          title="筛选条件"
+          description="支持即时同步、折叠筛选项和查询重置。"
           span={8}
           initialValues={query}
           onChange={setQuery}
@@ -284,6 +286,10 @@ const BasicList: React.FC = () => {
 
         <BaseTable<ExampleRecord>
           rowKey="id"
+          toolbarTitle="项目列表"
+          toolbarDescription={`当前显示 ${filteredData.length} 条示例数据`}
+          showRefresh
+          onRefresh={() => message.info("列表已刷新")}
           columns={columns}
           dataSource={filteredData}
           pagination={false}

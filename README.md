@@ -5,36 +5,39 @@
 [![License](https://img.shields.io/github/license/zzq-github/react-admin-beautiful)](./LICENSE)
 ![React](https://img.shields.io/badge/React-18-61dafb?logo=react&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-4-646cff?logo=vite&logoColor=white)
-![Ant%20Design](https://img.shields.io/badge/Ant%20Design-6-1677ff?logo=antdesign&logoColor=white)
+![Ant Design](https://img.shields.io/badge/Ant%20Design-6-1677ff?logo=antdesign&logoColor=white)
 
-一个面向开源复用的 React Admin 通用模板。目标是让你 clone 后 5 分钟跑起来，然后用少量配置替换成自己的后台项目。
+一个面向开源复用和快速二开的 React Admin 通用模板。
 
-在线预览：[https://zzq-github.github.io/react-admin-beautiful/](https://zzq-github.github.io/react-admin-beautiful/)
+它提供了登录、布局、动态路由、权限菜单、主题 token、Mock、基础列表、基础表单、系统管理示例、CI 和 GitHub Pages 部署能力。目标不是塞满业务页面，而是让你可以更快接入自己的后端和业务模块。
+
+- 在线预览：[https://zzq-github.github.io/react-admin-beautiful/](https://zzq-github.github.io/react-admin-beautiful/)
+- GitHub：[https://github.com/zzq-github/react-admin-beautiful](https://github.com/zzq-github/react-admin-beautiful)
 
 ## 特性
 
 - React 18 + TypeScript + Vite + Ant Design 6 + Tailwind CSS
-- 代码级主题系统：品牌色、成功、警告、错误、信息色统一配置
-- 动态路由：根据后端菜单生成路由，页面按需懒加载
-- 后端协议适配：通过 adapter 抹平不同后端返回结构
-- 认证服务抽象：登录、退出、权限信息、刷新 token 统一走 `authService`
-- 权限控制：支持路由级和按钮级权限
-- 配置化 CRUD：沉淀表格、查询、表单、弹窗等通用组件
-- MSW Mock：无后端也能直接开发和演示
-
-## 内置示例
-
-默认 Mock 菜单分为三部分：
-
-- `Dashboard`：首页示例
-- `Examples`：最小学习示例，包含 Basic List、Form Demo 和 Theme Tokens
-- `System Demo`：复杂 CRUD 和权限示例，展示用户、角色、菜单等管理页面
-
-新增页面可以参考 [创建页面指南](./docs/create-page.md)。
+- 基于后端菜单的动态路由，页面入口按需懒加载
+- 后端协议 adapter：响应结构、用户信息、权限、菜单字段都可适配
+- `authService` 统一认证入口：登录、退出、权限信息、刷新 token
+- 主题 token 系统：品牌色、成功、警告、错误、信息、背景、边框、文本层级统一配置
+- CSS variables + Ant Design token + Tailwind 语义化 class 同步生效
+- 两种布局模式：侧边栏布局和顶部栏布局
+- 统一菜单图标入口 `MenuIcon`，业务操作图标使用 `lucide-react`
+- 统一 PageLoading、PageState、BaseTable 空状态和页面切换动画
+- MSW Mock，支持无后端启动、演示和 GitHub Pages 在线预览
+- GitHub Actions：typecheck、lint、test、build、Pages 自动部署
 
 ## 快速开始
 
+环境要求：
+
+- Node.js >= 20
+- pnpm >= 9
+
 ```bash
+git clone https://github.com/zzq-github/react-admin-beautiful.git
+cd react-admin-beautiful
 pnpm install
 pnpm dev
 ```
@@ -55,12 +58,58 @@ pnpm dev        # 启动开发环境，默认读取 .env.dev
 pnpm typecheck  # TypeScript 类型检查
 pnpm lint       # ESLint 代码检查
 pnpm test       # Vitest 单元测试
-pnpm check      # 本地执行与 CI 相同的核心检查链
+pnpm check      # 执行 typecheck、lint、test、build
 pnpm build      # 构建生产版本，默认读取 .env.prod
 pnpm preview    # 预览生产构建产物
 ```
 
-## 创建自己的项目
+## 内置页面
+
+默认 Mock 菜单分为三组：
+
+- `Dashboard`：首页概览示例
+- `Examples`：最小学习示例，包括基础列表、基础表单、Theme Tokens
+- `System Demo`：复杂 CRUD 和权限示例，包括用户、角色、部门、菜单、字典等页面
+
+`Examples` 更适合学习如何新建页面，`System Demo` 更适合参考复杂业务页如何组织 hooks、schema、表格、弹窗和操作逻辑。
+
+## 技术栈
+
+- React 18
+- TypeScript
+- Vite
+- Ant Design 6
+- Tailwind CSS
+- Zustand
+- React Router
+- Axios
+- MSW
+- Vitest
+- ESLint
+- GitHub Actions
+
+## 目录结构
+
+```text
+src/
+├── api/              # API 请求封装
+├── components/       # 通用组件
+├── config/           # 应用级配置入口
+├── core/             # 模板核心模型、adapter、service
+├── hooks/            # 通用 Hooks
+├── layout/           # 布局组件
+├── mock/             # MSW Mock
+├── pages/            # 页面和示例业务
+├── router/           # 静态路由、动态路由、页面扫描
+├── store/            # Zustand 状态管理
+├── theme/            # 主题 token 和 ThemeProvider
+├── types/            # TypeScript 类型定义
+└── utils/            # 通用工具
+```
+
+## 替换成你的项目
+
+新项目接入时，推荐优先从这些入口开始：
 
 1. 复制环境变量示例：
 
@@ -74,38 +123,26 @@ Windows PowerShell:
 Copy-Item .env.example .env.dev
 ```
 
-2. 修改应用信息：
+2. 修改应用名称、Logo 简写、描述、版权和默认路由：
 
 ```env
 VITE_APP_NAME=Your Admin
 VITE_APP_SHORT_NAME=Y
 VITE_APP_DESCRIPTION=Your Platform
 VITE_APP_COPYRIGHT=(c) 2026 Your Company
-```
-
-3. 修改默认路由和接口地址：
-
-```env
 VITE_APP_DEFAULT_ROUTE=/dashboard
-VITE_BASE_API=
-VITE_API_PREFIX=/api
-VITE_PROXY_TARGET=http://localhost:8080
-VITE_MSW_ENABLE=true
 ```
 
-4. 修改主题：
-
-```text
-src/theme/appTheme.ts
-```
-
-5. 接真实后端时关闭 Mock：
+3. 接真实后端时关闭 Mock，并配置接口地址：
 
 ```env
 VITE_MSW_ENABLE=false
+VITE_BASE_API=
+VITE_API_PREFIX=/api
+VITE_PROXY_TARGET=http://localhost:8080
 ```
 
-然后根据你的后端返回格式调整：
+4. 根据你的后端返回格式调整 adapter：
 
 ```text
 src/core/adapters/protocol.ts
@@ -113,6 +150,14 @@ src/core/adapters/auth.ts
 src/core/adapters/menu.ts
 src/core/services/authService.ts
 ```
+
+5. 替换主题 token：
+
+```text
+src/theme/appTheme.ts
+```
+
+完整二开清单见：[自定义项目指南](./docs/customize-template.md)。
 
 ## 配置入口
 
@@ -122,79 +167,84 @@ src/core/services/authService.ts
 src/config/app.ts
 ```
 
-这里统一读取应用名称、描述、默认路由、登录路由、通知路由、API 前缀、Mock 开关等配置。页面和布局不要直接读取散落的环境变量，优先使用 `appConfig`。
-
-## 目录结构
-
-```text
-src/
-├── api/              # API 请求封装
-├── components/       # 通用组件
-├── config/           # 应用级配置入口
-├── core/             # 模板核心模型、adapter、service
-├── hooks/            # 通用 Hooks
-├── layout/           # 布局组件
-├── mock/             # MSW Mock
-├── pages/            # 页面和示例业务，examples 是最小示例，system 是复杂示例
-├── router/           # 静态路由、动态路由、页面扫描
-├── store/            # Zustand 状态管理
-├── theme/            # 主题 token 和 ThemeProvider
-├── types/            # TypeScript 类型定义
-└── utils/            # 通用工具
-```
-
-## 环境变量
-
-| 变量名 | 说明 | 默认值 |
-| --- | --- | --- |
-| `VITE_APP_NAME` | 应用名称 | React Admin Plus |
-| `VITE_APP_SHORT_NAME` | Logo 短名称 | R |
-| `VITE_APP_DESCRIPTION` | 应用描述 | Admin Platform |
-| `VITE_APP_COPYRIGHT` | 登录页版权文案 | (c) 2026 React Admin Plus |
-| `VITE_APP_DEFAULT_ROUTE` | 登录后的默认路由 | /dashboard |
-| `VITE_APP_LOGIN_ROUTE` | 登录页路由 | /login |
-| `VITE_APP_NOTIFY_ROUTE` | 消息中心路由 | /user/notify-message |
-| `VITE_BASE_API` | 后端 API 基础地址 | 空字符串 |
-| `VITE_API_PREFIX` | API 请求前缀 | /api |
-| `VITE_PROXY_TARGET` | Vite 开发代理目标 | http://localhost:8080 |
-| `VITE_CAPTCHA_ENABLE` | 验证码开关 | false |
-| `VITE_MSW_ENABLE` | MSW Mock 开关 | dev: true / prod: false |
-| `VITE_TAGGER_ENABLE` | 开发辅助插件开关 | false |
+这里统一读取应用名称、描述、默认路由、登录路由、通知路由、API 前缀、Mock 开关等配置。布局、登录页、路由和请求层应优先使用 `appConfig`，避免在页面里散落读取环境变量。
 
 ## 主题定制
 
-主题不再提供运行时预设颜色切换，适合作为开源模板的稳定基座。你可以在 `src/theme/appTheme.ts` 中统一配置：
+主题采用代码级配置，不在运行时暴露多套预设主题色切换。默认配置位于：
+
+```text
+src/theme/appTheme.ts
+```
+
+你可以统一配置：
 
 - `colorPrimary`
 - `colorSuccess`
 - `colorWarning`
 - `colorError`
 - `colorInfo`
-- 各状态的 hover、active、bg、border 色
+- 背景、边框、文本层级
 - `borderRadius`
-- `componentSize`：Ant Design 全局组件尺寸，默认 `small`
+- `componentSize`
+- `motionDuration*`
+- `motionEase*`
 
-这些配置会同步到 Ant Design token、CSS 变量和 Tailwind 语义类，例如：
+这些 token 会同步到 Ant Design token、CSS variables 和 Tailwind 语义化 class。
+
+推荐在业务页面中使用：
 
 ```tsx
 <span className="text-theme-success">已启用</span>
-<div className="bg-theme-error-bg border border-theme-error-border">错误提示</div>
+<div className="border border-theme-error-border bg-theme-error-bg">
+  错误提示
+</div>
 ```
 
-## 对接后端
+避免直接写死 `blue-*`、`red-*`、`slate-*` 等 Tailwind 颜色。
 
-模板内部尽量不绑定某个后端协议。接入真实后端时推荐顺序：
+## 动态路由
 
-1. 关闭 Mock：`VITE_MSW_ENABLE=false`
-2. 配置 `VITE_BASE_API` 或 `VITE_PROXY_TARGET`
-3. 在 `src/api/` 中替换接口路径
-4. 在 `src/core/adapters` 中适配返回结构
-5. 在 `src/core/services/authService.ts` 中统一认证行为
+动态路由根据后端菜单生成。页面扫描基于 `import.meta.glob`，只扫描页面入口文件：
+
+```text
+src/pages/**/index.tsx
+src/pages/**/index.jsx
+src/pages/*.tsx
+src/pages/*.jsx
+```
+
+后端菜单中的组件路径可以写成：
+
+```ts
+{
+  type: "menu",
+  path: "user-management",
+  component: "system/UserManagement/index"
+}
+```
+
+它会匹配：
+
+```text
+src/pages/system/UserManagement/index.tsx
+```
 
 ## 文档
 
-- [模板设计说明](./docs/admin-template-guide.md)
+- [自定义项目指南](./docs/customize-template.md)
 - [创建页面指南](./docs/create-page.md)
+- [模板设计说明](./docs/admin-template-guide.md)
+- [掘金介绍文章草稿](./docs/juejin-intro-post.md)
+
+## CI 与部署
+
+项目内置 GitHub Actions：
+
+- `.github/workflows/ci.yml`：push / pull request 时执行 typecheck、lint、test、build
+- `.github/workflows/deploy-pages.yml`：push 到 `main` 或 `master` 后自动部署 GitHub Pages
+
+如果你 fork 后使用 GitHub Pages，请在仓库 Settings -> Pages 中确认 Source 使用 GitHub Actions。
 
 ## License
 

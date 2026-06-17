@@ -290,6 +290,27 @@ const textTokens = [
   },
 ];
 
+const motionTokens = [
+  {
+    label: "Fast",
+    cssVar: "--motion-duration-fast",
+    value: appTheme.motionDurationFast,
+    className: "duration-motion-fast ease-motion-out",
+  },
+  {
+    label: "Base",
+    cssVar: "--motion-duration-base",
+    value: appTheme.motionDurationBase,
+    className: "duration-motion-base ease-motion-out",
+  },
+  {
+    label: "Slow",
+    cssVar: "--motion-duration-slow",
+    value: appTheme.motionDurationSlow,
+    className: "duration-motion-slow ease-motion-out",
+  },
+];
+
 const ThemeTokens: React.FC = () => {
   const { themeConfig, setThemeConfig } = useTheme();
 
@@ -432,6 +453,45 @@ const ThemeTokens: React.FC = () => {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="rounded-lg border border-theme-border bg-theme-bg p-4">
+          <div className="mb-4">
+            <h3 className="text-base font-semibold text-theme-text">
+              Motion Tokens
+            </h3>
+            <p className="text-sm text-theme-text-secondary">
+              页面切换、加载态和交互反馈统一使用 motion token，避免动效节奏分散。
+            </p>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            {motionTokens.map((item) => (
+              <div
+                key={item.cssVar}
+                className="group rounded-lg border border-theme-border-secondary bg-theme-bg-container p-4"
+              >
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-medium text-theme-text">
+                      {item.label}
+                    </div>
+                    <div className="text-xs text-theme-text-tertiary">
+                      {item.cssVar}
+                    </div>
+                  </div>
+                  <span className="text-xs text-theme-text-tertiary">
+                    {item.value}
+                  </span>
+                </div>
+                <div className="h-2 rounded-full bg-theme-bg-spotlight">
+                  <div
+                    className={`h-2 w-1/2 rounded-full bg-theme-primary transition-all group-hover:w-full ${item.className}`}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 

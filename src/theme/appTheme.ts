@@ -26,6 +26,12 @@ export interface AppTheme {
   colorInfoBg: string;
   colorInfoBorder: string;
   borderRadius: number;
+  motionDurationFast: string;
+  motionDurationBase: string;
+  motionDurationSlow: string;
+  motionEaseStandard: string;
+  motionEaseOut: string;
+  motionEaseEmphasized: string;
 }
 
 export const appTheme: AppTheme = {
@@ -56,4 +62,10 @@ export const appTheme: AppTheme = {
   colorInfoBg: "#e6f4ff",
   colorInfoBorder: "#91caff",
   borderRadius: 6,
+  motionDurationFast: "120ms",
+  motionDurationBase: "180ms",
+  motionDurationSlow: "260ms",
+  motionEaseStandard: "cubic-bezier(0.2, 0, 0, 1)",
+  motionEaseOut: "cubic-bezier(0.16, 1, 0.3, 1)",
+  motionEaseEmphasized: "cubic-bezier(0.2, 0, 0, 1)",
 };

@@ -1,5 +1,6 @@
 import React from "react";
 import { Settings } from "lucide-react";
+import HeaderActionButton from "./HeaderActionButton";
 import NotificationBell from "./NotificationBell";
 import UserDropdown from "./UserDropdown";
 
@@ -9,16 +10,11 @@ interface HeaderActionsProps {
 
 const HeaderActions: React.FC<HeaderActionsProps> = ({ onOpenSettings }) => {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5">
       <NotificationBell />
-      <button
-        type="button"
-        aria-label="主题设置"
-        onClick={onOpenSettings}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-theme-text-secondary hover:text-theme-text hover:bg-theme-hover transition-colors"
-      >
+      <HeaderActionButton label="主题设置" onClick={onOpenSettings}>
         <Settings size={18} />
-      </button>
+      </HeaderActionButton>
       <UserDropdown />
     </div>
   );

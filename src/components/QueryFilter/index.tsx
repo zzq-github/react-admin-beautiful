@@ -1,7 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Form, Button, Row, Col, Space } from "antd";
 import type { FormProps } from "antd/es/form";
+import { ChevronDown, ChevronUp, RotateCcw, Search, SlidersHorizontal } from "lucide-react";
 import type { QueryFilterProps } from "./types";
+
+const joinClassNames = (...classNames: Array<string | false | undefined>) =>
+  classNames.filter(Boolean).join(" ");
 
 const QueryFilter: React.FC<QueryFilterProps> = ({
   fields = [],
@@ -10,88 +14,170 @@ const QueryFilter: React.FC<QueryFilterProps> = ({
   onChange,
   initialValues = {},
   span = 6,
+  title,
+  description,
+  extra,
+  actions,
   leftActions,
+  submitText = "查询",
+  resetText = "重置",
+  collapsible = true,
+  defaultCollapsed = true,
+  maxVisibleRows = 1,
+  className,
 }) => {
   const [form] = Form.useForm();
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
 
-  // 监听 initialValues 变化，同步到 UI
-  // 当父组件（如 useQueryFilter）改变初始值时，这里负责填入表单
   useEffect(() => {
     form.setFieldsValue(initialValues);
   }, [initialValues, form]);
 
-  const handleFinish = (values: any) => {
-    // ... 原有的数据转换逻辑 ...
-    const assignObj: any = {};
+  const normalizeValues = (values: any) => {
+    const transformedValues: any = {};
+
     fields.forEach((field) => {
       if (field.transformChangeValue) {
-        assignObj[field.name] = field.transformChangeValue(values[field.name]);
+        transformedValues[field.name] = field.transformChangeValue(values[field.name]);
       }
     });
-    // 注意：这里最好合并 initialValues，防止字段丢失（视业务需求而定）
-    onChange?.(Object.assign({}, initialValues, values, assignObj));
-    onSearch?.();
+
+    return Object.assign({}, initialValues, values, transformedValues);
   };
 
-  // ✅ 关键点 2：UI 的重置
+  const { visibleFields, hasHiddenFields } = useMemo(() => {
+    if (!collapsible || !collapsed) {
+      return { visibleFields: fields, hasHiddenFields: false };
+    }
+
+    const maxSpan = 24 * maxVisibleRows;
+    let usedSpan = 0;
+    const nextVisibleFields = fields.filter((field, index) => {
+      const fieldSpan = field.span || span;
+      const shouldShow = index === 0 || usedSpan + fieldSpan <= maxSpan;
+
+      if (shouldShow) {
+        usedSpan += fieldSpan;
+      }
+
+      return shouldShow;
+    });
+
+    return {
+      visibleFields: nextVisibleFields,
+      hasHiddenFields: nextVisibleFields.length < fields.length,
+    };
+  }, [collapsed, collapsible, fields, maxVisibleRows, span]);
+
+  const handleFinish = (values: any) => {
+    const nextValues = normalizeValues(values);
+    onChange?.(nextValues);
+    onSearch?.(nextValues);
+  };
+
   const handleReset = () => {
-    // 1. UI 层：将表单重置回 initialValues 状态
-    // 如果你想完全清空（变成空白），使用 form.resetFields()
-    // 如果你想重置回当前的 initialValues，这也是 form.resetFields() 的默认行为
-    form.resetFields(); 
-    
-    // 2. 数据层：通知父组件触发重置逻辑
+    form.resetFields();
     onReset?.();
   };
 
   const onValuesChange: FormProps["onValuesChange"] = (
-    changedValues,
-    allValues,
+    _changedValues,
+    allValues
   ) => {
-    // 实时同步变更给外部
-    onChange?.(allValues);
+    onChange?.(normalizeValues(allValues));
   };
 
+  const hasHeader = title || description || extra;
+  const canToggle = collapsible && (hasHiddenFields || !collapsed);
+
   return (
-    <Form
-      form={form}
-      layout="horizontal"
-      // 注意：虽然有 useEffect，但这个 prop 依然保留，用于第一次渲染
-      initialValues={initialValues} 
-      onValuesChange={onValuesChange}
-      onFinish={handleFinish}
-    >
-      <Row gutter={24}>
-        {fields.map((item) => (
-          <Col span={item.span || span} key={item.name}>
-            <Form.Item name={item.name} label={item.label} rules={item.rules}>
-              {item.component}
-            </Form.Item>
-          </Col>
-        ))}
-
-        <Col span={24}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "24px",
-            }}
-          >
-            <Space>{leftActions}</Space>
-
-            <Space>
-              <Button type="primary" htmlType="submit">
-                查询
-              </Button>
-              {/* 这里调用修改后的 handleReset */}
-              <Button onClick={handleReset}>重置</Button>
-            </Space>
+    <div className={joinClassNames("query-filter", className)}>
+      {hasHeader ? (
+        <div className="query-filter-header">
+          <div className="min-w-0">
+            {title ? (
+              <div className="text-sm font-semibold text-theme-text">
+                {title}
+              </div>
+            ) : null}
+            {description ? (
+              <div className="mt-0.5 text-xs leading-5 text-theme-text-secondary">
+                {description}
+              </div>
+            ) : null}
           </div>
-        </Col>
-      </Row>
-    </Form>
+          {extra ? <div className="flex items-center gap-2">{extra}</div> : null}
+        </div>
+      ) : null}
+
+      <Form
+        form={form}
+        layout="vertical"
+        initialValues={initialValues}
+        onValuesChange={onValuesChange}
+        onFinish={handleFinish}
+      >
+        <Row gutter={[12, 12]} align="bottom">
+          {visibleFields.map((item) => (
+            <Col
+              xs={24}
+              sm={12}
+              lg={item.span || span}
+              key={item.name}
+              className="query-filter-field"
+            >
+              <Form.Item name={item.name} label={item.label} rules={item.rules}>
+                {item.component}
+              </Form.Item>
+            </Col>
+          ))}
+
+          <Col span={24}>
+            <div className="query-filter-actions">
+              <div className="min-h-8 min-w-0 flex-1">
+                {leftActions ? (
+                  <div className="flex flex-wrap items-center gap-2">
+                    {leftActions}
+                  </div>
+                ) : null}
+              </div>
+
+              <Space wrap size={8}>
+                {canToggle ? (
+                  <Button
+                    type="text"
+                    icon={
+                      collapsed ? (
+                        <ChevronDown size={14} />
+                      ) : (
+                        <ChevronUp size={14} />
+                      )
+                    }
+                    onClick={() => setCollapsed((value) => !value)}
+                  >
+                    {collapsed ? "展开" : "收起"}
+                  </Button>
+                ) : null}
+                <Button icon={<RotateCcw size={14} />} onClick={handleReset}>
+                  {resetText}
+                </Button>
+                <Button type="primary" htmlType="submit" icon={<Search size={14} />}>
+                  {submitText}
+                </Button>
+                {actions}
+              </Space>
+            </div>
+          </Col>
+        </Row>
+      </Form>
+
+      {hasHiddenFields && collapsed ? (
+        <div className="query-filter-hint">
+          <SlidersHorizontal size={13} />
+          还有 {fields.length - visibleFields.length} 个筛选项
+        </div>
+      ) : null}
+    </div>
   );
 };
 

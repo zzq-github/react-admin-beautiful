@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { Loader } from "lucide-react";
+import PageLoading from "@/components/PageLoading";
 import { useUserStore } from "@/store/useUserStore";
 import { useDictStore } from "@/store/useDictStore";
 import { getAccessToken } from "@/utils/auth";
@@ -35,21 +35,19 @@ const Layout: React.FC = () => {
   }, [accessToken, fetchDictDatas, fetchUserInfo, status]);
 
   const renderLoading = () => (
-    <div className="flex items-center justify-center h-screen bg-theme-bg-base">
-      <Loader className="animate-spin text-theme-primary" size={32} />
-    </div>
+    <PageLoading fullscreen label="正在准备工作台" />
   );
 
   const renderError = () => (
-    <div className="flex items-center justify-center h-screen bg-theme-bg-base text-center">
+    <div className="flex h-screen items-center justify-center bg-theme-bg-base text-center">
       <div>
-        <p className="text-theme-error mb-4 font-medium">
+        <p className="mb-4 font-medium text-theme-error">
           用户信息加载失败，请检查网络
         </p>
         <button
           type="button"
           onClick={() => fetchUserInfo()}
-          className="px-6 py-2 bg-theme-primary hover:bg-theme-primary-hover text-white rounded-md transition-colors shadow-sm"
+          className="rounded-md bg-theme-primary px-6 py-2 text-white shadow-sm transition-colors duration-motion-base ease-motion-out hover:bg-theme-primary-hover"
         >
           重试
         </button>

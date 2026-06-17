@@ -148,6 +148,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       "--color-info-active": appTheme.colorInfoActive,
       "--color-info-border": colorTokens.colorInfoBorder,
       "--color-info-bg": colorTokens.colorInfoBg,
+      "--motion-duration-fast": appTheme.motionDurationFast,
+      "--motion-duration-base": appTheme.motionDurationBase,
+      "--motion-duration-slow": appTheme.motionDurationSlow,
+      "--motion-ease-standard": appTheme.motionEaseStandard,
+      "--motion-ease-out": appTheme.motionEaseOut,
+      "--motion-ease-emphasized": appTheme.motionEaseEmphasized,
     };
 
     Object.entries(appThemeVars).forEach(([key, value]) => {
