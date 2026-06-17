@@ -9,6 +9,7 @@ import { appConfig } from "@/config/app";
 import { useDynamicRoutes } from "./DynamicRoutes";
 
 const Dashboard = lazy(() => import("@/pages/Dashboard"));
+const DictData = lazy(() => import("@/pages/system/DictManagement/DictData"));
 
 const Router: React.FC = () => {
   const [dynamicRouteElements, isLoading] = useDynamicRoutes();
@@ -37,6 +38,14 @@ const Router: React.FC = () => {
               }
             />
             <Route path={appConfig.notifyRoute} element={<NotifyMessage />} />
+            <Route
+              path="system-demo/dict-management/dict-data/:dictType"
+              element={
+                <Suspense fallback={<PageLoading label="页面加载中" />}>
+                  <DictData />
+                </Suspense>
+              }
+            />
             {dynamicRouteElements}
           </Route>
 

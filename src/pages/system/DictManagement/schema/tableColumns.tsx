@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 export const renderDictTypeColumns = ({ EditAction, DeleteAction }) => {
   const navigate = useNavigate();
   const goToDictData = (dictType: string) => {
-    navigate(`/system/dict-management/DictData/${dictType}`);
+    navigate(`/system-demo/dict-management/dict-data/${dictType}`);
   };
   return useMemo(
     () => [
