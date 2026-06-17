@@ -1,18 +1,18 @@
 import React from "react";
 import {
+  AppWindow,
   BarChart3,
   Bell,
   Book,
-  BookOpen,
-  Boxes,
+  BookOpenCheck,
   Briefcase,
   Building2,
   Check,
   ChevronDown,
   ChevronRight,
-  ClipboardList,
   Cloud,
   Code,
+  Cog,
   Cpu,
   Database,
   Download,
@@ -24,17 +24,18 @@ import {
   Flag,
   Folder,
   FolderTree,
-  Gauge,
+  FormInput,
   GitBranch,
   Globe,
   Heart,
   HelpCircle,
   Key,
+  LayoutDashboard,
   Link,
   ListTree,
   Lock,
   Mail,
-  Menu,
+  MenuSquare,
   MessageSquare,
   Minus,
   MoreVertical,
@@ -43,17 +44,16 @@ import {
   Plus,
   Search,
   Server,
-  Settings2,
-  Shield,
+  ShieldCheck,
   SlidersHorizontal,
   Star,
-  Table2,
+  TableProperties,
   Terminal,
   Trash2,
   Unlock,
   Upload,
-  User,
-  Users,
+  UserCog,
+  Users2,
   X,
   Zap,
   type LucideIcon,
@@ -66,25 +66,32 @@ interface MenuIconProps {
 }
 
 const menuIconRegistry: Record<string, LucideIcon> = {
-  dashboard: Gauge,
-  home: Gauge,
-  example: Boxes,
-  system: Settings2,
-  settings: Settings2,
-  config: Settings2,
-  user: User,
-  users: Users,
-  people: Users,
-  peoples: Users,
-  role: Shield,
-  shield: Shield,
-  menu: Menu,
+  dashboard: LayoutDashboard,
+  home: LayoutDashboard,
+  example: AppWindow,
+  examples: AppWindow,
+  system: Cog,
+  settings: Cog,
+  config: Cog,
+  user: UserCog,
+  users: Users2,
+  people: Users2,
+  peoples: ShieldCheck,
+  role: ShieldCheck,
+  shield: ShieldCheck,
+  menu: MenuSquare,
+  "menu-square": MenuSquare,
   building: Building2,
-  department: Network,
+  department: Building2,
+  dept: Building2,
+  organization: Network,
   briefcase: Briefcase,
   book: Book,
-  dict: BookOpen,
+  dict: BookOpenCheck,
+  dictionary: BookOpenCheck,
   sliders: SlidersHorizontal,
+  theme: SlidersHorizontal,
+  tokens: SlidersHorizontal,
   bell: Bell,
   "file-text": FileText,
   globe: Globe,
@@ -99,8 +106,8 @@ const menuIconRegistry: Record<string, LucideIcon> = {
   tree: GitBranch,
   "folder-tree": FolderTree,
   "list-tree": ListTree,
-  table: Table2,
-  form: ClipboardList,
+  table: TableProperties,
+  form: FormInput,
   folder: Folder,
   "file-code": FileCode,
   message: MessageSquare,
@@ -140,7 +147,7 @@ const menuIconRegistry: Record<string, LucideIcon> = {
   "git-pull-request-closed": GitBranch,
   "git-fork": GitBranch,
   question: HelpCircle,
-  default: Gauge,
+  default: LayoutDashboard,
 };
 
 export const menuIconNames = Object.keys(menuIconRegistry)
@@ -159,12 +166,13 @@ const MenuIcon: React.FC<MenuIconProps> = ({
   const Icon = menuIconRegistry[resolveMenuIconName(name)];
 
   return (
-    <Icon
-      size={size}
-      strokeWidth={1.75}
+    <span
       className={className}
+      style={{ "--menu-icon-size": `${size}px` } as React.CSSProperties}
       aria-hidden="true"
-    />
+    >
+      <Icon size={size} strokeWidth={2.15} />
+    </span>
   );
 };
 
