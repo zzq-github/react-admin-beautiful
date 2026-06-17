@@ -235,7 +235,7 @@ src/pages/system/UserManagement/index.tsx
 - [自定义项目指南](./docs/customize-template.md)
 - [创建页面指南](./docs/create-page.md)
 - [模板设计说明](./docs/admin-template-guide.md)
-- [掘金介绍文章草稿](./docs/juejin-intro-post.md)
+- [掘金介绍文章](./docs/juejin-intro-post.md)
 
 ## CI 与部署
 

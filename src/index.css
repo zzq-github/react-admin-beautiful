@@ -340,6 +340,79 @@
   margin: 14px 12px !important;
 }
 
+.schema-form .ant-form-item {
+  margin-bottom: 0;
+}
+
+.schema-form .ant-form-item-label {
+  padding-bottom: 4px;
+}
+
+.schema-form .ant-form-item-label > label {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.schema-form .ant-form-item-extra {
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+}
+
+.schema-form-section {
+  border-radius: 12px;
+}
+
+.schema-form-section + .schema-form-section {
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+.schema-form-section-header {
+  margin-bottom: 12px;
+}
+
+.form-action-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+.form-summary-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 12px;
+  background: var(--color-bg-base);
+}
+
+.form-modal .ant-modal-content {
+  overflow: hidden;
+  border: 1px solid var(--color-border-secondary);
+  background: var(--color-bg-container);
+}
+
+.form-modal .ant-modal-header {
+  margin-bottom: 0;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border-secondary);
+  background: transparent;
+}
+
+.form-modal .ant-modal-body {
+  padding-top: 18px;
+}
+
+.form-modal .ant-modal-footer {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border-secondary);
+}
+
 @media (max-width: 640px) {
   .query-filter-actions,
   .base-table-toolbar {

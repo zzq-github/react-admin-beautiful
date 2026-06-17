@@ -1,83 +1,139 @@
 import React, {
-  useImperativeHandle,
-  useState,
   forwardRef,
+  useImperativeHandle,
   useRef,
+  useState,
 } from "react";
 import { Form, Modal, message } from "antd";
-import { FormModalProps, FormModalRef } from "./types";
+import type { FormModalOpenConfig, FormModalProps, FormModalRef } from "./types";
+
+interface ModalState {
+  visible: boolean;
+  title: React.ReactNode;
+  description?: React.ReactNode;
+  loading: boolean;
+  isEdit: boolean;
+}
 
 const FormModal = forwardRef<FormModalRef, FormModalProps>((props, ref) => {
-  const { renderForm, rowKey = "id", onSuccess, ...restProps } = props;
+  const {
+    renderForm,
+    rowKey = "id",
+    onSuccess,
+    children,
+    okText = "保存",
+    cancelText = "取消",
+    width = 640,
+    className,
+    ...restProps
+  } = props;
   const [form] = Form.useForm();
-  // 使用一个状态对象管理，减少多次 setState
-  const [state, setState] = useState({ visible: false, title: '', loading: false, isEdit: false });
-  const contextRef = useRef<{ api?: Function; transform?: Function; id?: any }>({});
+  const [state, setState] = useState<ModalState>({
+    visible: false,
+    title: "",
+    loading: false,
+    isEdit: false,
+  });
+  const contextRef = useRef<{
+    api?: FormModalOpenConfig["api"];
+    transform?: FormModalOpenConfig["transform"];
+    id?: any;
+  }>({});
+
+  const closeModal = () => {
+    if (state.loading) {
+      return;
+    }
+    setState((prev) => ({ ...prev, visible: false }));
+  };
+
   useImperativeHandle(ref, () => ({
-    open: ({ title, record, api, transform }) => {
+    open: ({ title, description, record, api, transform }) => {
       const id = record?.[rowKey];
       contextRef.current = { api, transform, id };
-      setState({ visible: true, title, loading: false, isEdit: !!id });
-      // 使用 setFieldsValue 之前先 reset，防止上一次的数据残留
       form.resetFields();
       if (record) {
         form.setFieldsValue(record);
       }
+      setState({
+        visible: true,
+        title,
+        description,
+        loading: false,
+        isEdit: !!id,
+      });
     },
   }));
 
   const handleOk = async () => {
     try {
-      // 1. 校验
       let values = await form.validateFields();
-      // 2. 格式化数据 (Transform)
+
       if (contextRef.current.transform) {
         values = contextRef.current.transform(values);
       }
-      // 3. 注入 ID
-      const params = state.isEdit 
-        ? { ...values, [rowKey]: contextRef.current.id } 
+
+      const params = state.isEdit
+        ? { ...values, [rowKey]: contextRef.current.id }
         : values;
-      // 4. 提交
-      setState(prev => ({ ...prev, loading: true }));
+
+      setState((prev) => ({ ...prev, loading: true }));
+
       if (contextRef.current.api) {
         await contextRef.current.api(params);
-        message.success("操作成功");
-        onSuccess?.();
-        closeModal();
       }
-    } catch (error: any) {
-      // 如果是 antd 表单校验失败，不需要全局提示，表单项会变红
-      if (error?.errorFields) return;
-      console.error("Submit Error:", error);
-    } finally {
-      setState(prev => ({ ...prev, loading: false }));
-    }
-  };
 
-  const closeModal = () => {
-    setState(prev => ({ ...prev, visible: false }));
+      message.success("操作成功");
+      onSuccess?.();
+      setState((prev) => ({ ...prev, visible: false }));
+    } catch (error: any) {
+      if (error?.errorFields) {
+        return;
+      }
+      console.error("Submit Error:", error);
+      message.error(error?.message || "提交失败，请稍后重试");
+    } finally {
+      setState((prev) => ({ ...prev, loading: false }));
+    }
   };
 
   return (
     <Modal
       {...restProps}
-      title={state.title}
+      width={width}
+      className={["form-modal", className].filter(Boolean).join(" ")}
+      title={
+        <div className="form-modal-title">
+          <div className="text-base font-semibold text-theme-text">
+            {state.title}
+          </div>
+          {state.description ? (
+            <div className="mt-1 text-xs font-normal leading-5 text-theme-text-secondary">
+              {state.description}
+            </div>
+          ) : null}
+        </div>
+      }
       open={state.visible}
       confirmLoading={state.loading}
+      okText={okText}
+      cancelText={cancelText}
+      maskClosable={false}
       onOk={handleOk}
       onCancel={closeModal}
-      destroyOnHidden // 强烈建议：关闭时销毁子组件，保证状态纯净
+      destroyOnHidden
     >
-      {/* 如果有 renderForm 则渲染表单，否则由 children 提供内容（用于无 Form 场景） */}
-      {renderForm ? (
+      <div className="form-modal-body">
+        {renderForm ? (
           <Form form={form} layout="vertical" component={false}>
             {renderForm(form, state.isEdit)}
           </Form>
         ) : (
-          restProps.children
+          children
         )}
+      </div>
     </Modal>
   );
 });
+
 export default FormModal;
