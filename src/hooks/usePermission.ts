@@ -1,49 +1,58 @@
-import { useUserStore } from '@/store/useUserStore';
+import { useUserStore } from "@/store/useUserStore";
 
-/**
- * 权限判断 Hook
- * 提供路由级和按钮级的权限判断
- */
+export type PermissionCode = string | string[];
+export type PermissionMode = "all" | "any";
+
 export function usePermission() {
   const permissions = useUserStore((state) => state.info?.permissions) || [];
   const roles = useUserStore((state) => state.info?.roles) || [];
 
-  /**
-   * 判断是否拥有指定权限
-   * @param permission 权限标识，如 "system:user:create"
-   */
+  const isSuperAdmin =
+    roles.includes("admin") ||
+    roles.includes("super_admin") ||
+    permissions.includes("*");
+
   const hasPermission = (permission: string): boolean => {
-    // 如果是超级管理员（角色中包含 "admin"），直接放行
-    if (roles.includes('admin') || roles.includes('super_admin')) {
+    if (isSuperAdmin) {
       return true;
     }
     return permissions.includes(permission);
   };
 
-  /**
-   * 判断是否拥有任意一个权限
-   * @param permissionList 权限标识数组
-   */
   const hasAnyPermission = (permissionList: string[]): boolean => {
-    if (roles.includes('admin') || roles.includes('super_admin')) {
+    if (isSuperAdmin) {
       return true;
     }
-    return permissionList.some((p) => permissions.includes(p));
+    return permissionList.some((permission) => permissions.includes(permission));
   };
 
-  /**
-   * 判断是否拥有指定角色
-   * @param role 角色标识
-   */
-  const hasRole = (role: string): boolean => {
-    return roles.includes(role);
+  const hasAllPermissions = (permissionList: string[]): boolean => {
+    if (isSuperAdmin) {
+      return true;
+    }
+    return permissionList.every((permission) => permissions.includes(permission));
   };
+
+  const matchPermission = (
+    code: PermissionCode,
+    mode: PermissionMode = "all",
+  ): boolean => {
+    if (Array.isArray(code)) {
+      return mode === "any" ? hasAnyPermission(code) : hasAllPermissions(code);
+    }
+    return hasPermission(code);
+  };
+
+  const hasRole = (role: string): boolean => roles.includes(role);
 
   return {
     permissions,
     roles,
+    isSuperAdmin,
     hasPermission,
     hasAnyPermission,
+    hasAllPermissions,
+    matchPermission,
     hasRole,
   };
 }

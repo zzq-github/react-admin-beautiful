@@ -6,6 +6,7 @@ import { useUserStore } from "@/store/useUserStore";
 import { getAccessToken } from "@/utils/auth";
 import { convertMenuVOToRouteConfigs } from "@/utils/route";
 import { dynamicImport } from "./dynamicImport";
+import { extraRoutePaths } from "./extraRoutes";
 
 export const useDynamicRoutes = (): [React.ReactElement[], boolean] => {
   const rawMenus = useUserStore((state) => state.rawMenus);
@@ -21,7 +22,7 @@ export const useDynamicRoutes = (): [React.ReactElement[], boolean] => {
 
     const menuArray = Array.isArray(rawMenus) ? rawMenus : [rawMenus];
     const routeConfigs = convertMenuVOToRouteConfigs(menuArray);
-    const staticPaths = ["dashboard"];
+    const staticPaths = ["dashboard", ...extraRoutePaths];
 
     const elements = routeConfigs
       .filter((config) => !staticPaths.includes(config.path.replace(/^\//, "")))

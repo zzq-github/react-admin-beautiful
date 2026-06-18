@@ -7,6 +7,7 @@ import BaseTable from "@/components/BaseTable";
 import DictTypeModal from "@/components/FormModal";
 import PageContainer from "@/components/PageContainer";
 import PagePanel from "@/components/PagePanel";
+import Auth from "@/components/Auth";
 import { renderDictTypeColumns } from "./schema/tableColumns";
 import { renderDictTypeQueryFields } from "./schema/queryFields";
 import { renderDictTypeForm } from "./schema/modalForms";
@@ -38,13 +39,15 @@ const DictManagement: React.FC = () => {
           >
             刷新缓存
           </Button>
-          <Button
-            type="primary"
-            icon={<Plus size={14} />}
-            onClick={handleAddDictType}
-          >
-            新增字典类型
-          </Button>
+          <Auth code="system:dict:create">
+            <Button
+              type="primary"
+              icon={<Plus size={14} />}
+              onClick={handleAddDictType}
+            >
+              新增字典类型
+            </Button>
+          </Auth>
         </Space>
       }
     >

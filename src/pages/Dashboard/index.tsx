@@ -20,16 +20,9 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip as RechartsTooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+  SimpleBarChart,
+  TrendAreaChart,
+} from "@/components/Charts";
 import PageContainer from "@/components/PageContainer";
 import PagePanel from "@/components/PagePanel";
 
@@ -77,18 +70,18 @@ const toneClasses: Record<Tone, { icon: string; chip: string }> = {
 
 const metricCards: MetricCard[] = [
   {
-    title: "用户总数",
+    title: "账号总数",
     value: "12,893",
-    detail: "活跃用户 8,642",
+    detail: "活跃账号 8,642",
     change: "12.4%",
     trend: "up",
     tone: "primary",
     icon: Users,
   },
   {
-    title: "今日订单",
+    title: "今日任务",
     value: "1,893",
-    detail: "支付转化 64%",
+    detail: "准时完成 64%",
     change: "8.2%",
     trend: "up",
     tone: "success",
@@ -104,7 +97,7 @@ const metricCards: MetricCard[] = [
     icon: Activity,
   },
   {
-    title: "内容发布",
+    title: "发布内容",
     value: "456",
     detail: "待审核 18",
     change: "25%",
@@ -126,8 +119,8 @@ const trendData = [
 
 const quickActions: QuickAction[] = [
   {
-    title: "新建项目",
-    description: "创建业务模块",
+    title: "新建模块",
+    description: "创建页面入口",
     icon: Plus,
     tone: "primary",
   },
@@ -144,8 +137,8 @@ const quickActions: QuickAction[] = [
     tone: "warning",
   },
   {
-    title: "发布日志",
-    description: "记录版本变更",
+    title: "更新日志",
+    description: "记录版本变化",
     icon: Layers,
     tone: "info",
   },
@@ -160,8 +153,8 @@ const activityItems = [
   },
   {
     time: "09:15",
-    title: "运营提交了新内容",
-    description: "等待审核队列新增 3 条记录",
+    title: "团队提交了新内容",
+    description: "待审核队列新增 3 条记录",
     tone: "warning" as Tone,
   },
   {
@@ -172,7 +165,7 @@ const activityItems = [
   },
   {
     time: "昨天",
-    title: "新增 4 个后台账号",
+    title: "新增 4 个管理账号",
     description: "权限范围已按部门隔离",
     tone: "info" as Tone,
   },
@@ -276,7 +269,7 @@ const Dashboard: React.FC = () => {
   return (
     <PageContainer
       title="仪表盘"
-      subtitle="运营概览、系统状态和最近活动。"
+      subtitle="模板概览、系统状态和最近活动。"
       headerMeta={
         <>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-theme-primary-border bg-theme-primary-bg px-2.5 py-1 text-xs font-medium text-theme-primary">
@@ -297,9 +290,9 @@ const Dashboard: React.FC = () => {
           <Button
             type="primary"
             icon={<Plus size={14} />}
-            onClick={() => message.info("打开新建项目")}
+            onClick={() => message.info("打开新建模块")}
           >
-            新建项目
+            新建模块
           </Button>
         </Space>
       }
@@ -313,7 +306,7 @@ const Dashboard: React.FC = () => {
       <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.55fr)]">
         <PagePanel
           title="访问趋势"
-          description="近 7 天访问量与订单量"
+          description="近 7 天访问量与任务量"
           action={
             <span className="inline-flex items-center gap-1.5 rounded-full border border-theme-success-border bg-theme-success-bg px-2 py-0.5 text-xs font-medium text-theme-success">
               <span className="h-1.5 w-1.5 rounded-full bg-theme-success" />
@@ -323,65 +316,21 @@ const Dashboard: React.FC = () => {
           bodyClassName="p-0"
         >
           <div className="h-[320px] p-4">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={trendData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="dashboardVisits" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.26} />
-                    <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="dashboardOrders" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-success)" stopOpacity={0.18} />
-                    <stop offset="95%" stopColor="var(--color-success)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  stroke="var(--color-border-secondary)"
-                  strokeDasharray="3 3"
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "var(--color-text-tertiary)", fontSize: 12 }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "var(--color-text-tertiary)", fontSize: 12 }}
-                />
-                <RechartsTooltip
-                  cursor={{ stroke: "var(--color-border)", strokeDasharray: "4 4" }}
-                  contentStyle={{
-                    background: "var(--color-bg-elevated)",
-                    border: "1px solid var(--color-border-secondary)",
-                    borderRadius: 8,
-                    color: "var(--color-text)",
-                  }}
-                  labelStyle={{ color: "var(--color-text)", fontWeight: 600 }}
-                  itemStyle={{ color: "var(--color-text-secondary)" }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="visits"
-                  name="访问量"
-                  stroke="var(--color-primary)"
-                  strokeWidth={2}
-                  fill="url(#dashboardVisits)"
-                  activeDot={{ r: 4 }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="orders"
-                  name="订单量"
-                  stroke="var(--color-success)"
-                  strokeWidth={2}
-                  fill="url(#dashboardOrders)"
-                  activeDot={{ r: 4 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            <TrendAreaChart
+              data={trendData}
+              series={[
+                {
+                  dataKey: "visits",
+                  name: "访问量",
+                  color: "var(--color-primary)",
+                },
+                {
+                  dataKey: "orders",
+                  name: "任务量",
+                  color: "var(--color-success)",
+                },
+              ]}
+            />
           </div>
         </PagePanel>
 
@@ -472,45 +421,13 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <PagePanel title="业务分布" description="本周模块使用量" bodyClassName="p-4">
-          <div className="h-[220px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={trendData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-                <CartesianGrid
-                  stroke="var(--color-border-secondary)"
-                  strokeDasharray="3 3"
-                  vertical={false}
-                />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "var(--color-text-tertiary)", fontSize: 12 }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "var(--color-text-tertiary)", fontSize: 12 }}
-                />
-                <RechartsTooltip
-                  cursor={{ fill: "var(--color-hover-bg)" }}
-                  contentStyle={{
-                    background: "var(--color-bg-elevated)",
-                    border: "1px solid var(--color-border-secondary)",
-                    borderRadius: 8,
-                    color: "var(--color-text)",
-                  }}
-                  labelStyle={{ color: "var(--color-text)", fontWeight: 600 }}
-                />
-                <Bar
-                  dataKey="orders"
-                  name="业务量"
-                  radius={[6, 6, 0, 0]}
-                  fill="var(--color-primary)"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+        <PagePanel title="模块分布" description="本周模块使用量" bodyClassName="p-4">
+          <SimpleBarChart
+            data={trendData}
+            dataKey="orders"
+            name="任务量"
+            height={220}
+          />
         </PagePanel>
 
         <PagePanel title="效率指数" description="综合处理表现">

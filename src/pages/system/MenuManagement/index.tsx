@@ -5,6 +5,7 @@ import BaseTable from "@/components/BaseTable";
 import EditMenuModal from "@/components/FormModal";
 import PageContainer from "@/components/PageContainer";
 import PagePanel from "@/components/PagePanel";
+import Auth from "@/components/Auth";
 import { MenuColumns } from "./schema/tableColumns";
 import { MenuFields } from "./schema/queryFields";
 import { renderEditMenuForm } from "./schema/modalForms";
@@ -26,9 +27,11 @@ const MenuManagement = () => {
       title="菜单管理"
       subtitle="管理菜单结构、路由配置和按钮权限。"
       action={
-        <Button type="primary" icon={<Plus size={14} />} onClick={handleAddMenu}>
-          新增菜单
-        </Button>
+        <Auth code="system:menu:create">
+          <Button type="primary" icon={<Plus size={14} />} onClick={handleAddMenu}>
+            新增菜单
+          </Button>
+        </Auth>
       }
     >
       <PagePanel>

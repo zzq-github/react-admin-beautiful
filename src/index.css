@@ -511,6 +511,11 @@
 }
 
 .app-sidebar-menu .ant-menu-title-content {
+  margin-inline-start: 0 !important;
+}
+
+.app-sidebar-menu .ant-menu-item:has(.ant-menu-item-icon) .ant-menu-title-content,
+.app-sidebar-menu .ant-menu-submenu-title:has(.ant-menu-item-icon) .ant-menu-title-content {
   margin-inline-start: 6px !important;
 }
 

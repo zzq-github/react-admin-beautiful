@@ -3,7 +3,7 @@ import { Badge } from "antd";
 import { Bell } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { appConfig } from "@/config/app";
-import HeaderActionButton from "./HeaderActionButton";
+import HeaderActionButton from "./ActionButton";
 
 const NotificationBell: React.FC = () => {
   const navigate = useNavigate();

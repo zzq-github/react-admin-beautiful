@@ -9,6 +9,7 @@ import EditUserModal from "@/components/FormModal";
 import { renderUserForm, renderPasswordForm } from "./schema/modalForms";
 import PageContainer from "@/components/PageContainer";
 import PagePanel from "@/components/PagePanel";
+import Auth from "@/components/Auth";
 import AssignRoleModal from "./modal/AssignRoleModal";
 import { useUserManagement } from "./hooks";
 
@@ -38,9 +39,11 @@ const UserManagement: React.FC = () => {
       title="用户管理"
       subtitle="管理系统用户账号、部门归属、岗位和角色授权。"
       action={
-        <Button type="primary" icon={<Plus size={14} />} onClick={handleAddUser}>
-          新增用户
-        </Button>
+        <Auth code="system:user:create">
+          <Button type="primary" icon={<Plus size={14} />} onClick={handleAddUser}>
+            新增用户
+          </Button>
+        </Auth>
       }
     >
       <div className="flex flex-col gap-4 xl:flex-row">

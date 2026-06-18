@@ -20,6 +20,7 @@ import { FormModalRef } from "@/components/FormModal/types";
 import { renderDictDataForm } from "./schema/modalForms";
 import PageContainer from "@/components/PageContainer";
 import PagePanel from "@/components/PagePanel";
+import Auth from "@/components/Auth";
 
 const DictData: React.FC = () => {
   const { dictType } = useParams();
@@ -50,19 +51,21 @@ const DictData: React.FC = () => {
       title="字典数据"
       subtitle={`管理 ${dictType || "当前字典"} 下的选项值和展示样式。`}
       action={
-        <Button
-          type="primary"
-          icon={<Plus size={14} />}
-          onClick={() =>
-            modalRef.current?.open({
-              title: "新增字典数据",
-              record: { dictType, status: 0 },
-              api: addDictData,
-            })
-          }
-        >
-          新增字典数据
-        </Button>
+        <Auth code="system:dict:create">
+          <Button
+            type="primary"
+            icon={<Plus size={14} />}
+            onClick={() =>
+              modalRef.current?.open({
+                title: "新增字典数据",
+                record: { dictType, status: 0 },
+                api: addDictData,
+              })
+            }
+          >
+            新增字典数据
+          </Button>
+        </Auth>
       }
     >
       <PagePanel>

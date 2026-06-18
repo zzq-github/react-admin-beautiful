@@ -57,6 +57,8 @@ password: admin123
 pnpm dev        # 启动开发环境，默认读取 .env.dev
 pnpm typecheck  # TypeScript 类型检查
 pnpm lint       # ESLint 代码检查
+pnpm format     # 使用 Prettier 格式化代码
+pnpm format:check # 检查代码格式是否符合 Prettier 配置
 pnpm test       # Vitest 单元测试
 pnpm check      # 执行 typecheck、lint、test、build
 pnpm build      # 构建生产版本，默认读取 .env.prod
@@ -72,6 +74,12 @@ pnpm preview    # 预览生产构建产物
 - `System Demo`：复杂 CRUD 和权限示例，包括用户、角色、部门、菜单、字典等页面
 
 `Examples` 更适合学习如何新建页面，`System Demo` 更适合参考复杂业务页如何组织 hooks、schema、表格、弹窗和操作逻辑。
+
+## 模板定位
+
+这个项目更适合作为中后台项目的起点，而不是完整业务系统。模板默认保留登录、权限菜单、动态路由、主题、Mock、基础 CRUD 和部署流程，把业务模型、接口协议和页面细节留给实际项目接入。
+
+如果你需要的是低代码平台、数据大屏或完整权限后台，本项目可以作为工程底座；如果你需要的是轻量、清晰、便于 fork 后二开的 React Admin 模板，它会更贴近这个目标。
 
 ## 技术栈
 

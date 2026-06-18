@@ -3,7 +3,7 @@ import { Menu } from "antd";
 import type { MenuProps } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUserStore } from "@/store/useUserStore";
-import Logo from "@/layout/components/Logo";
+import Logo from "@/layout/Header/Logo";
 import {
   buildMenuItems,
   findOpenMenuKeys,
@@ -20,7 +20,10 @@ const SideSidebar: React.FC<SideSidebarProps> = ({ collapsed }) => {
   const menus = useUserStore((state) => state.menus) ?? [];
   const [openKeys, setOpenKeys] = useState<string[]>([]);
 
-  const menuItems = useMemo(() => buildMenuItems(menus), [menus]);
+  const menuItems = useMemo(
+    () => buildMenuItems(menus, { maxIconLevel: 0 }),
+    [menus]
+  );
   const selectedKey = useMemo(
     () => findSelectedMenuKey(menus, location.pathname),
     [location.pathname, menus]

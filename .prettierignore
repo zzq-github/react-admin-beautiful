@@ -1,0 +1,15 @@
+dist
+node_modules
+coverage
+prototype
+.git
+.pnpm-store
+.cache
+pnpm-lock.yaml
+public/mockServiceWorker.js
+vite.config.js.timestamp-*
+scripts
+repomix-output.*
+*.log
+*.tsbuildinfo
+*.d.ts

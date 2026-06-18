@@ -89,6 +89,10 @@ export function convertMenuVOToRouteConfigs(menus: AdminMenu[]): RouteConfig[] {
 
   const traverse = (nodes: AdminMenu[], currentParentPath: string = '') => {
     for (const node of nodes) {
+      if (node.visible === false) {
+        continue;
+      }
+
       // 计算当前节点的完整路径（无论是否生成路由）
       const fullPath = buildFullPath(node.path || '', currentParentPath);
       const path = fullPath || `/${node.id}`;

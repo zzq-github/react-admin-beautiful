@@ -80,12 +80,27 @@ export function convertMenuVOToMenuItems(menuVO: AdminMenu | AdminMenu[] | null)
 
 export type AntdMenuItem = NonNullable<MenuProps["items"]>[number];
 
-export function buildMenuItems(menus: MenuItem[]): MenuProps["items"] {
+interface BuildMenuItemsOptions {
+  maxIconLevel?: number;
+}
+
+export function buildMenuItems(
+  menus: MenuItem[],
+  options: BuildMenuItemsOptions = {},
+  level = 0
+): MenuProps["items"] {
+  const { maxIconLevel = Number.POSITIVE_INFINITY } = options;
+
   return menus.map((item) => ({
     key: item.path,
-    icon: item.icon && React.isValidElement(item.icon) ? item.icon : undefined,
+    icon:
+      level <= maxIconLevel && item.icon && React.isValidElement(item.icon)
+        ? item.icon
+        : undefined,
     label: item.label,
-    children: item.children?.length ? buildMenuItems(item.children) : undefined,
+    children: item.children?.length
+      ? buildMenuItems(item.children, options, level + 1)
+      : undefined,
   }));
 }
 

@@ -3,6 +3,7 @@ import { Button } from "antd";
 import { Plus } from "lucide-react";
 import PageContainer from "@/components/PageContainer";
 import PagePanel from "@/components/PagePanel";
+import Auth from "@/components/Auth";
 import QueryFilter from "@/components/QueryFilter";
 import BaseTable from "@/components/BaseTable";
 import FormModal from "@/components/FormModal";
@@ -32,9 +33,11 @@ const RoleManagement: React.FC = () => {
       title="角色管理"
       subtitle="管理角色、菜单权限和数据权限范围。"
       action={
-        <Button type="primary" icon={<Plus size={14} />} onClick={handleAddRole}>
-          新增角色
-        </Button>
+        <Auth code="system:role:create">
+          <Button type="primary" icon={<Plus size={14} />} onClick={handleAddRole}>
+            新增角色
+          </Button>
+        </Auth>
       }
     >
       <PagePanel>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Settings } from "lucide-react";
-import HeaderActionButton from "./HeaderActionButton";
+import HeaderActionButton from "./ActionButton";
 import NotificationBell from "./NotificationBell";
 import UserDropdown from "./UserDropdown";
 
