@@ -1,14 +1,12 @@
-import type { AuthPermissionInfoRespVO } from '@/api/login/types';
-import type { AdminPermissionInfo } from '@/core/types';
+import type { AdminPermissionInfo, BackendPermissionInfo } from '@/core/types';
 import { normalizeMenus } from './menu';
 
-export function normalizePermissionInfo(info: AuthPermissionInfoRespVO): AdminPermissionInfo {
+export function normalizePermissionInfo(info: BackendPermissionInfo): AdminPermissionInfo {
   return {
     ...info,
     user: info.user,
-    roles: info.roles || [],
-    permissions: info.permissions || [],
+    roles: Array.isArray(info.roles) ? info.roles : [],
+    permissions: Array.isArray(info.permissions) ? info.permissions : [],
     menus: normalizeMenus(info.menus) || [],
   };
 }
-

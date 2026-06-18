@@ -1,7 +1,7 @@
-import React, { lazy, Suspense } from "react";
-import PageLoading from "@/components/PageLoading";
+import React, { lazy, Suspense } from 'react';
+import PageLoading from '@/components/PageLoading';
 
-const DictData = lazy(() => import("@/pages/system/DictManagement/DictData"));
+const DictData = lazy(() => import('@/pages/system/DictManagement/DictData'));
 
 export interface ExtraRouteConfig {
   path: string;
@@ -9,12 +9,12 @@ export interface ExtraRouteConfig {
 }
 
 const withPageLoading = (element: React.ReactElement) => (
-  <Suspense fallback={<PageLoading label="页面加载中" />}>{element}</Suspense>
+  <Suspense fallback={<PageLoading label="页面加载中..." />}>{element}</Suspense>
 );
 
 export const extraRoutes: ExtraRouteConfig[] = [
   {
-    path: "system-demo/dict-management/dict-data/:dictType",
+    path: 'system-demo/dict-management/dict-data/:dictType',
     element: withPageLoading(<DictData />),
   },
 ];

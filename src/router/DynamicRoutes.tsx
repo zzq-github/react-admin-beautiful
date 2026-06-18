@@ -1,12 +1,12 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
-import { Route } from "react-router-dom";
-import PageLoading from "@/components/PageLoading";
-import PageState from "@/components/PageState";
-import { useUserStore } from "@/store/useUserStore";
-import { getAccessToken } from "@/utils/auth";
-import { convertMenuVOToRouteConfigs } from "@/utils/route";
-import { dynamicImport } from "./dynamicImport";
-import { extraRoutePaths } from "./extraRoutes";
+import React, { lazy, Suspense, useEffect, useState } from 'react';
+import { Route } from 'react-router-dom';
+import PageLoading from '@/components/PageLoading';
+import PageState from '@/components/PageState';
+import { useUserStore } from '@/store/useUserStore';
+import { getAccessToken } from '@/utils/auth';
+import { convertMenuVOToRouteConfigs } from '@/utils/route';
+import { dynamicImport } from './dynamicImport';
+import { extraRoutePaths } from './extraRoutes';
 
 export const useDynamicRoutes = (): [React.ReactElement[], boolean] => {
   const rawMenus = useUserStore((state) => state.rawMenus);
@@ -22,10 +22,10 @@ export const useDynamicRoutes = (): [React.ReactElement[], boolean] => {
 
     const menuArray = Array.isArray(rawMenus) ? rawMenus : [rawMenus];
     const routeConfigs = convertMenuVOToRouteConfigs(menuArray);
-    const staticPaths = ["dashboard", ...extraRoutePaths];
+    const staticPaths = new Set(['dashboard', ...extraRoutePaths]);
 
     const elements = routeConfigs
-      .filter((config) => !staticPaths.includes(config.path.replace(/^\//, "")))
+      .filter((config) => !staticPaths.has(config.path.replace(/^\//, '')))
       .map((config) => {
         const LazyComponent = lazy(() =>
           dynamicImport(config.componentPath).catch(() =>
@@ -37,18 +37,16 @@ export const useDynamicRoutes = (): [React.ReactElement[], boolean] => {
                   description={`未找到页面组件：${config.componentPath}`}
                 />
               ),
-            })
-          )
+            }),
+          ),
         );
-
-        const routePath = config.path.replace(/^\//, "");
 
         return (
           <Route
             key={config.path}
-            path={routePath}
+            path={config.path.replace(/^\//, '')}
             element={
-              <Suspense fallback={<PageLoading label="页面加载中" />}>
+              <Suspense fallback={<PageLoading label="页面加载中..." />}>
                 <LazyComponent />
               </Suspense>
             }

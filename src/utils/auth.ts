@@ -1,9 +1,7 @@
 /**
- * 认证相关工具函数
- * 提供 Token 管理、记住密码等通用能力
+ * 认证相关工具函数。
+ * 负责访问令牌、刷新令牌和“记住密码”等本地状态管理。
  */
-
-// ========== Token 相关 ==========
 
 export interface TokenInfo {
   accessToken: string;
@@ -31,8 +29,6 @@ export function removeToken(): void {
   localStorage.removeItem(RefreshTokenKey);
 }
 
-// ========== 记住密码相关 ==========
-
 const UsernameKey = 'USERNAME';
 const PasswordKey = 'PASSWORD';
 const RememberMeKey = 'REMEMBER_ME';
@@ -50,12 +46,13 @@ export function removeUsername(): void {
 }
 
 /**
- * 获取记住的密码（简单编码，非加密，仅防止明文暴露）
- * 生产环境建议配合后端加密方案
+ * 获取记住的密码。
+ * 这里只做 Base64 编码，不能视为安全加密；生产项目建议交给后端或浏览器凭证能力处理。
  */
 export function getPassword(): string | undefined {
   const password = localStorage.getItem(PasswordKey);
   if (!password) return undefined;
+
   try {
     return atob(password);
   } catch {
@@ -67,7 +64,7 @@ export function setPassword(password: string): void {
   try {
     localStorage.setItem(PasswordKey, btoa(password));
   } catch {
-    // 非 ASCII 字符可能编码失败，静默处理
+    // 非 ASCII 字符可能编码失败，保持静默以避免影响登录主流程。
   }
 }
 

@@ -1,205 +1,184 @@
-import React, { useMemo, useState } from "react";
-import { Button, Input, Progress, Select, Space, Tag, message } from "antd";
-import { Archive, CheckCircle2, Plus, RefreshCw } from "lucide-react";
-import type { ColumnsType } from "antd/es/table";
-import PageContainer from "@/components/PageContainer";
-import PagePanel from "@/components/PagePanel";
-import QueryFilter from "@/components/QueryFilter";
-import BaseTable from "@/components/BaseTable";
+import React, { useMemo, useRef, useState } from 'react';
+import { Button, Input, Popconfirm, Progress, Select, Space, Tag, message } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import { Archive, CheckCircle2, Plus, Trash2 } from 'lucide-react';
+import type { FormInstance } from 'antd';
+import Auth from '@/components/Auth';
+import BaseTable from '@/components/BaseTable';
+import FormModal from '@/components/FormModal';
+import type { FormModalRef } from '@/components/FormModal/types';
+import PageContainer from '@/components/PageContainer';
+import PagePanel from '@/components/PagePanel';
+import QueryFilter from '@/components/QueryFilter';
+import SchemaForm from '@/components/SchemaForm';
+import useQueryFilter from '@/hooks/useQueryFilter';
+import useTableRequest from '@/hooks/useTableRequest';
+import {
+  createExampleProject,
+  deleteExampleProject,
+  deleteExampleProjectList,
+  getExampleProjectPage,
+  updateExampleProject,
+} from '@/api/examples/project';
+import type {
+  ExampleProjectCategory,
+  ExampleProjectPageReq,
+  ExampleProjectResp,
+  ExampleProjectStatus,
+} from '@/api/examples/project/types';
 
-interface ExampleRecord {
-  id: number;
-  name: string;
-  owner: string;
-  category: "console" | "workflow" | "report";
-  status: "enabled" | "disabled" | "draft";
-  progress: number;
-  updatedAt: string;
-}
-
-const records: ExampleRecord[] = [
-  {
-    id: 1,
-    name: "Customer Console",
-    owner: "Alex",
-    category: "console",
-    status: "enabled",
-    progress: 86,
-    updatedAt: "2026-06-01",
-  },
-  {
-    id: 2,
-    name: "Operations Desk",
-    owner: "Taylor",
-    category: "workflow",
-    status: "enabled",
-    progress: 72,
-    updatedAt: "2026-06-08",
-  },
-  {
-    id: 3,
-    name: "Billing Center",
-    owner: "Morgan",
-    category: "console",
-    status: "disabled",
-    progress: 34,
-    updatedAt: "2026-06-12",
-  },
-  {
-    id: 4,
-    name: "Release Report",
-    owner: "Casey",
-    category: "report",
-    status: "draft",
-    progress: 48,
-    updatedAt: "2026-06-13",
-  },
-  {
-    id: 5,
-    name: "Approval Flow",
-    owner: "Jordan",
-    category: "workflow",
-    status: "enabled",
-    progress: 91,
-    updatedAt: "2026-06-14",
-  },
-  {
-    id: 6,
-    name: "Data Quality Board",
-    owner: "Riley",
-    category: "report",
-    status: "enabled",
-    progress: 64,
-    updatedAt: "2026-06-15",
-  },
+const categoryOptions: Array<{ label: string; value: ExampleProjectCategory }> = [
+  { label: '控制台', value: 'console' },
+  { label: '工作流', value: 'workflow' },
+  { label: '报表', value: 'report' },
 ];
 
-const categoryLabels: Record<ExampleRecord["category"], string> = {
-  console: "控制台",
-  workflow: "工作流",
-  report: "报表",
-};
-
-const statusOptions = [
-  { label: "启用", value: "enabled" },
-  { label: "停用", value: "disabled" },
-  { label: "草稿", value: "draft" },
+const statusOptions: Array<{ label: string; value: ExampleProjectStatus }> = [
+  { label: '启用', value: 'enabled' },
+  { label: '停用', value: 'disabled' },
+  { label: '草稿', value: 'draft' },
 ];
 
-const getStatusTag = (status: ExampleRecord["status"]) => {
-  const statusMap = {
-    enabled: { color: "success", label: "启用" },
-    disabled: { color: "default", label: "停用" },
-    draft: { color: "warning", label: "草稿" },
-  };
-  const option = statusMap[status];
-  return <Tag color={option.color}>{option.label}</Tag>;
+const categoryLabels = Object.fromEntries(
+  categoryOptions.map((item) => [item.value, item.label]),
+) as Record<ExampleProjectCategory, string>;
+
+const statusMap: Record<ExampleProjectStatus, { color: string; label: string }> = {
+  enabled: { color: 'success', label: '启用' },
+  disabled: { color: 'default', label: '停用' },
+  draft: { color: 'warning', label: '草稿' },
 };
 
 const BasicList: React.FC = () => {
-  const [query, setQuery] = useState<{
-    keyword?: string;
-    status?: ExampleRecord["status"];
-    category?: ExampleRecord["category"];
-  }>({});
+  const modalRef = useRef<FormModalRef>(null);
+  const query = useQueryFilter<ExampleProjectPageReq>({});
+  const table = useTableRequest<ExampleProjectPageReq, ExampleProjectResp>({
+    request: getExampleProjectPage,
+    params: query.getParams(),
+  });
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
-  const filteredData = useMemo(() => {
-    return records.filter((item) => {
-      const keyword = query.keyword?.trim().toLowerCase();
-      const matchKeyword = keyword
-        ? item.name.toLowerCase().includes(keyword) ||
-          item.owner.toLowerCase().includes(keyword)
-        : true;
-      const matchStatus = query.status ? item.status === query.status : true;
-      const matchCategory = query.category
-        ? item.category === query.category
-        : true;
-      return matchKeyword && matchStatus && matchCategory;
+  const enabledCount = table.data.filter((item) => item.status === 'enabled').length;
+  const averageProgress =
+    table.data.length > 0
+      ? Math.round(table.data.reduce((sum, item) => sum + item.progress, 0) / table.data.length)
+      : 0;
+
+  const handleAdd = () => {
+    modalRef.current?.open({
+      title: '新增项目',
+      description: '演示新增接口、表单校验和成功后刷新列表。',
+      record: {
+        category: 'console',
+        status: 'enabled',
+        progress: 0,
+      },
+      api: createExampleProject,
     });
-  }, [query]);
+  };
 
-  const enabledCount = records.filter((item) => item.status === "enabled").length;
-  const averageProgress = Math.round(
-    records.reduce((sum, item) => sum + item.progress, 0) / records.length
-  );
+  const handleEdit = (record: ExampleProjectResp) => {
+    modalRef.current?.open({
+      title: '编辑项目',
+      description: '演示编辑接口与 FormModal 复用。',
+      record,
+      api: updateExampleProject,
+    });
+  };
 
-  const columns: ColumnsType<ExampleRecord> = [
-    {
-      title: "项目名称",
-      dataIndex: "name",
-      render: (name: string, record) => (
-        <div>
-          <div className="font-medium text-theme-text">{name}</div>
-          <div className="text-xs text-theme-text-tertiary">
-            #{record.id} · {categoryLabels[record.category]}
+  const handleDelete = async (record: ExampleProjectResp) => {
+    await deleteExampleProject(record.id);
+    message.success('删除成功');
+    table.reload(query.getParams());
+  };
+
+  const handleBatchDelete = async () => {
+    await deleteExampleProjectList(selectedRowKeys.map(Number));
+    message.success('批量删除成功');
+    setSelectedRowKeys([]);
+    table.reload(query.getParams());
+  };
+
+  const columns: ColumnsType<ExampleProjectResp> = useMemo(
+    () => [
+      {
+        title: '项目名称',
+        dataIndex: 'name',
+        render: (name: string, record) => (
+          <div>
+            <div className="font-medium text-theme-text">{name}</div>
+            <div className="text-xs text-theme-text-tertiary">
+              #{record.id} · {categoryLabels[record.category]}
+            </div>
           </div>
-        </div>
-      ),
-    },
-    {
-      title: "负责人",
-      dataIndex: "owner",
-      width: 160,
-    },
-    {
-      title: "状态",
-      dataIndex: "status",
-      width: 140,
-      render: getStatusTag,
-    },
-    {
-      title: "进度",
-      dataIndex: "progress",
-      width: 180,
-      render: (progress: number) => (
-        <Progress percent={progress} size="small" />
-      ),
-    },
-    {
-      title: "更新时间",
-      dataIndex: "updatedAt",
-      width: 160,
-    },
-    {
-      title: "操作",
-      key: "action",
-      width: 160,
-      render: (_, record) => (
-        <Space>
-          <Button
-            type="link"
-            className="!px-0"
-            onClick={() => message.info(`查看 ${record.name}`)}
-          >
-            查看
-          </Button>
-          <Button
-            type="link"
-            danger
-            className="!px-0"
-            onClick={() => message.warning("这里接入删除接口")}
-          >
-            删除
-          </Button>
-        </Space>
-      ),
-    },
-  ];
+        ),
+      },
+      {
+        title: '负责人',
+        dataIndex: 'owner',
+        width: 140,
+      },
+      {
+        title: '状态',
+        dataIndex: 'status',
+        width: 120,
+        render: (status: ExampleProjectStatus) => {
+          const option = statusMap[status];
+          return <Tag color={option.color}>{option.label}</Tag>;
+        },
+      },
+      {
+        title: '进度',
+        dataIndex: 'progress',
+        width: 180,
+        render: (progress: number) => <Progress percent={progress} size="small" />,
+      },
+      {
+        title: '更新时间',
+        dataIndex: 'updatedAt',
+        width: 140,
+      },
+      {
+        title: '操作',
+        key: 'action',
+        width: 160,
+        render: (_, record) => (
+          <Space>
+            <Auth code="example:project:update">
+              <Button type="link" className="!px-0" onClick={() => handleEdit(record)}>
+                编辑
+              </Button>
+            </Auth>
+            <Auth code="example:project:delete">
+              <Popconfirm
+                title="提示"
+                description="确定删除该项目？"
+                okText="删除"
+                cancelText="取消"
+                onConfirm={() => handleDelete(record)}
+              >
+                <Button type="link" danger className="!px-0">
+                  删除
+                </Button>
+              </Popconfirm>
+            </Auth>
+          </Space>
+        ),
+      },
+    ],
+    [query, table],
+  );
 
   return (
     <PageContainer
-      title="Basic List"
-      subtitle="展示筛选、统计、批量选择、表格操作和主题化内容面板。"
+      title="CRUD 示例"
+      subtitle="打通后端菜单、动态路由、接口请求、分页表格、弹窗表单和按钮权限。"
       action={
-        <Space>
-          <Button icon={<RefreshCw size={14} />} onClick={() => message.info("列表已刷新")}>
-            刷新
-          </Button>
-          <Button type="primary" icon={<Plus size={14} />} onClick={() => message.success("这里打开新增弹窗")}>
+        <Auth code="example:project:create">
+          <Button type="primary" icon={<Plus size={14} />} onClick={handleAdd}>
             新增项目
           </Button>
-        </Space>
+        </Auth>
       }
     >
       <div className="mb-4 grid gap-3 md:grid-cols-3">
@@ -209,10 +188,8 @@ const BasicList: React.FC = () => {
               <Archive size={18} />
             </div>
             <div>
-              <div className="text-xs text-theme-text-tertiary">项目总数</div>
-              <div className="text-xl font-semibold text-theme-text">
-                {records.length}
-              </div>
+              <div className="text-xs text-theme-text-tertiary">当前页项目</div>
+              <div className="text-xl font-semibold text-theme-text">{table.data.length}</div>
             </div>
           </div>
         </PagePanel>
@@ -223,9 +200,7 @@ const BasicList: React.FC = () => {
             </div>
             <div>
               <div className="text-xs text-theme-text-tertiary">启用项目</div>
-              <div className="text-xl font-semibold text-theme-text">
-                {enabledCount}
-              </div>
+              <div className="text-xl font-semibold text-theme-text">{enabledCount}</div>
             </div>
           </div>
         </PagePanel>
@@ -238,67 +213,140 @@ const BasicList: React.FC = () => {
       <PagePanel>
         <QueryFilter
           title="筛选条件"
-          description="支持即时同步、折叠筛选项和查询重置。"
+          description="查询参数会传入接口，列表由 useTableRequest 统一处理分页。"
           span={8}
-          initialValues={query}
-          onChange={setQuery}
-          onReset={() => setQuery({})}
-          onSearch={() => message.success("查询完成")}
           fields={[
             {
-              name: "keyword",
-              label: "关键词",
+              name: 'keyword',
+              label: '关键词',
               component: <Input allowClear placeholder="项目名称 / 负责人" />,
             },
             {
-              name: "status",
-              label: "状态",
-              component: (
-                <Select
-                  allowClear
-                  placeholder="全部状态"
-                  options={statusOptions}
-                />
-              ),
+              name: 'status',
+              label: '状态',
+              component: <Select allowClear placeholder="全部状态" options={statusOptions} />,
             },
             {
-              name: "category",
-              label: "分类",
-              component: (
-                <Select
-                  allowClear
-                  placeholder="全部分类"
-                  options={[
-                    { label: "控制台", value: "console" },
-                    { label: "工作流", value: "workflow" },
-                    { label: "报表", value: "report" },
-                  ]}
-                />
-              ),
+              name: 'category',
+              label: '分类',
+              component: <Select allowClear placeholder="全部分类" options={categoryOptions} />,
             },
           ]}
-          leftActions={
-            <span className="text-sm text-theme-text-secondary">
-              共 {filteredData.length} 条，已选择 {selectedRowKeys.length} 条
-            </span>
-          }
+          onChange={query.onChange}
+          onSearch={() => table.reload(query.getParams())}
+          onReset={() => {
+            query.reset();
+            table.reload({});
+          }}
         />
 
-        <BaseTable<ExampleRecord>
-          rowKey="id"
-          toolbarTitle="项目列表"
-          toolbarDescription={`当前显示 ${filteredData.length} 条示例数据`}
-          showRefresh
-          onRefresh={() => message.info("列表已刷新")}
-          columns={columns}
-          dataSource={filteredData}
-          pagination={false}
-          showSelection
-          onSelectionChange={(keys) => setSelectedRowKeys(keys)}
-        />
+        <div className="overflow-x-auto">
+          <BaseTable<ExampleProjectResp>
+            rowKey="id"
+            toolbarTitle="项目列表"
+            toolbarDescription={`接口返回共 ${table.pagination.total} 条记录`}
+            toolbarActions={
+              <Auth code="example:project:delete">
+                <Popconfirm
+                  title="提示"
+                  description={`确定删除选中的 ${selectedRowKeys.length} 个项目？`}
+                  okText="删除"
+                  cancelText="取消"
+                  disabled={selectedRowKeys.length === 0}
+                  onConfirm={handleBatchDelete}
+                >
+                  <Button
+                    danger
+                    icon={<Trash2 size={14} />}
+                    disabled={selectedRowKeys.length === 0}
+                  >
+                    批量删除
+                  </Button>
+                </Popconfirm>
+              </Auth>
+            }
+            showRefresh
+            onRefresh={() => table.reload(query.getParams())}
+            columns={columns}
+            dataSource={table.data}
+            loading={table.loading}
+            pagination={table.pagination}
+            showSelection
+            onSelectionChange={(keys) => setSelectedRowKeys(keys)}
+          />
+        </div>
       </PagePanel>
+
+      <FormModal
+        ref={modalRef}
+        onSuccess={() => table.reload(query.getParams())}
+        renderForm={(form, isEdit) => renderProjectForm(form, isEdit)}
+      />
     </PageContainer>
   );
 };
+
+function renderProjectForm(form: FormInstance, isEdit: boolean) {
+  return (
+    <SchemaForm
+      form={form}
+      column={2}
+      items={[
+        {
+          name: 'name',
+          label: '项目名称',
+          type: 'input',
+          span: 12,
+          rules: [{ required: true, message: '请输入项目名称' }],
+        },
+        {
+          name: 'owner',
+          label: '负责人',
+          type: 'input',
+          span: 12,
+          rules: [{ required: true, message: '请输入负责人' }],
+        },
+        {
+          name: 'category',
+          label: '分类',
+          type: 'select',
+          span: 12,
+          options: categoryOptions,
+          rules: [{ required: true, message: '请选择分类' }],
+        },
+        {
+          name: 'status',
+          label: '状态',
+          type: 'select',
+          span: 12,
+          options: statusOptions,
+          rules: [{ required: true, message: '请选择状态' }],
+        },
+        {
+          name: 'progress',
+          label: '进度',
+          type: 'number',
+          span: 12,
+          rules: [{ required: true, message: '请输入进度' }],
+          componentProps: {
+            min: 0,
+            max: 100,
+            addonAfter: '%',
+          },
+        },
+        {
+          name: 'description',
+          label: '说明',
+          type: 'textarea',
+          span: 24,
+          componentProps: {
+            rows: 3,
+            placeholder: isEdit ? '补充项目变更说明' : '补充项目说明',
+          },
+        },
+      ]}
+    />
+  );
+}
 
 export default BasicList;

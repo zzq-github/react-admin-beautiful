@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from "react";
-import { UseRequestOptions } from "./types/request";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { apiProtocol } from '@/core/adapters/protocol';
+import { UseRequestOptions } from './types/request';
 
 const useRequest = <P = any, T = any>({
   request,
@@ -8,7 +9,7 @@ const useRequest = <P = any, T = any>({
 }: UseRequestOptions<P, T>) => {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  
+
   const fetchedRef = useRef(false);
   const paramsRef = useRef<P>(params);
 
@@ -16,20 +17,23 @@ const useRequest = <P = any, T = any>({
     paramsRef.current = params;
   }, [params]);
 
-  const fetchData = useCallback(async (overrideParams?: P) => {
-    setLoading(true);
-    try {
-      const res = await request(overrideParams ?? paramsRef.current);
-      const result = (res as any).data ?? res;
-      setData(result);
-      return result as T; // 显式断言返回类型，方便外部 await
-    } catch (error) {
-      console.error("Request Error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [request]);
+  const fetchData = useCallback(
+    async (overrideParams?: P) => {
+      setLoading(true);
+      try {
+        const res = await request(overrideParams ?? paramsRef.current);
+        const result = apiProtocol.getData<T>(res);
+        setData(result);
+        return result;
+      } catch (error) {
+        console.error('Request Error:', error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [request],
+  );
 
   useEffect(() => {
     if (manual || fetchedRef.current) return;

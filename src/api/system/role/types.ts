@@ -1,9 +1,3 @@
-// FIX: Add PageParam interface to resolve missing type error.
-interface PageParam {
-  pageSize: number;
-  pageNo: number;
-}
-
 export interface RoleListQueryReq extends PageParam {
   name?: string;
   code?: string;

@@ -1,26 +1,24 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import type { UserState } from "./types/user";
-import { convertMenuVOToMenuItems } from "@/utils/menu";
-import { authService } from "@/core/services/authService";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { authService } from '@/core/services/authService';
+import { convertMenuVOToMenuItems } from '@/utils/menu';
+import type { UserState } from './types/user';
 
 export const useUserStore = create<UserState>()(
   persist(
     (set, get) => ({
       info: null,
-      status: "idle",
+      status: 'idle',
       menus: null,
       rawMenus: null,
 
       fetchUserInfo: async () => {
-        if (get().status === "loading" || get().status === "loaded") return;
+        if (get().status === 'loading' || get().status === 'loaded') return;
 
-        set({ status: "loading" });
+        set({ status: 'loading' });
 
         try {
           const userInfo = await authService.getPermissionInfo();
-
-          // 转换菜单数据
           const rawMenus = userInfo.menus;
           const menus = convertMenuVOToMenuItems(rawMenus);
 
@@ -28,18 +26,18 @@ export const useUserStore = create<UserState>()(
             info: userInfo,
             menus,
             rawMenus,
-            status: "loaded",
+            status: 'loaded',
           });
         } catch (error) {
-          console.error("Failed to fetch user info:", error);
-          set({ status: "error" });
+          console.error('Failed to fetch user info:', error);
+          set({ status: 'error' });
         }
       },
 
       resetUser: () => {
         set({
           info: null,
-          status: "idle",
+          status: 'idle',
           menus: null,
           rawMenus: null,
         });
@@ -50,11 +48,11 @@ export const useUserStore = create<UserState>()(
       },
     }),
     {
-      name: "user-store",
+      name: 'user-store',
       partialize: (state) => ({
         rawMenus: state.rawMenus,
         info: state.info,
       }),
-    }
-  )
+    },
+  ),
 );

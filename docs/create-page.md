@@ -13,9 +13,9 @@ src/pages/examples/BasicList/index.tsx
 最小页面示例：
 
 ```tsx
-import React from "react";
-import PageContainer from "@/components/PageContainer";
-import PagePanel from "@/components/PagePanel";
+import React from 'react';
+import PageContainer from '@/components/PageContainer';
+import PagePanel from '@/components/PagePanel';
 
 const BasicList: React.FC = () => {
   return (
@@ -34,9 +34,9 @@ export default BasicList;
 
 ```ts
 {
-  name: "Basic List",
-  path: "basic-list",
-  component: "examples/BasicList/index",
+  name: 'CRUD 示例',
+  path: 'basic-list',
+  component: 'examples/BasicList/index',
   type: 2,
   visible: true
 }
@@ -68,11 +68,11 @@ src/router/extraRoutes.tsx
 示例：
 
 ```tsx
-const DetailPage = lazy(() => import("@/pages/example/DetailPage"));
+const DetailPage = lazy(() => import('@/pages/example/DetailPage'));
 
 export const extraRoutes = [
   {
-    path: "examples/detail/:id",
+    path: 'examples/detail/:id',
     element: withPageLoading(<DetailPage />),
   },
 ];
@@ -96,7 +96,7 @@ export const extraRoutes = [
 
 需要承载表格、表单或图表时，使用 `PagePanel` 保持视觉结构一致。
 
-## 5. 创建列表页
+## 5. 创建 CRUD 列表页
 
 常见列表页组合：
 
@@ -128,24 +128,78 @@ export const extraRoutes = [
 src/pages/examples/BasicList/index.tsx
 ```
 
+这个示例已经打通一条完整模板链路：
+
+- 页面：`src/pages/examples/BasicList/index.tsx`
+- 接口：`src/api/examples/project`
+- Mock：`src/mock/handlers/examples.ts`
+- 菜单：`src/mock/handlers/auth.ts` 中的 `CRUD 示例`
+- 权限码：`example:project:create`、`example:project:update`、`example:project:delete`
+
+页面使用 `useQueryFilter` 管理查询参数，使用 `useTableRequest` 统一请求分页数据，使用 `FormModal + SchemaForm` 复用新增和编辑表单：
+
+```tsx
+const query = useQueryFilter<ProjectPageReq>({});
+const table = useTableRequest<ProjectPageReq, ProjectResp>({
+  request: getProjectPage,
+  params: query.getParams(),
+});
+```
+
+新增和编辑共用一个弹窗，只需要在打开时传入不同的 `api`：
+
+```tsx
+modalRef.current?.open({
+  title: '新增项目',
+  record: { status: 'enabled' },
+  api: createProject,
+});
+
+modalRef.current?.open({
+  title: '编辑项目',
+  record,
+  api: updateProject,
+});
+```
+
 ## 6. 添加按钮权限
 
-模板提供 `<Auth>` 和 `usePermission` 两种写法。Mock 环境默认返回 `["*"]`，表示全部放行。
+模板提供 `<Auth>` 和 `usePermission` 两种写法。Mock 环境默认返回显式权限码，便于观察按钮权限效果。
 
 组件写法：
 
 ```tsx
-import Auth from "@/components/Auth";
+import Auth from '@/components/Auth';
 
 <Auth code="system:user:create">
   <Button type="primary">新增</Button>
+</Auth>;
+```
+
+CRUD 示例使用：
+
+```tsx
+<Auth code="example:project:create">
+  <Button type="primary">新增项目</Button>
 </Auth>
 ```
+
+后端菜单中可以把按钮权限作为 `type: 3` 节点放在页面菜单下面。按钮节点不会进入侧栏，也不会生成路由：
+
+```ts
+{
+  name: '新增项目',
+  type: 3,
+  permission: 'example:project:create'
+}
+```
+
+如果后端不返回单独的 `permissions` 数组，也可以在 `src/core/adapters/auth.ts` 中从按钮菜单节点提取 `permission` 字段，统一收口到 `AdminPermissionInfo.permissions`。
 
 多个权限：
 
 ```tsx
-<Auth code={["system:user:create", "system:user:update"]} mode="any">
+<Auth code={['system:user:create', 'system:user:update']} mode="any">
   <Button>维护用户</Button>
 </Auth>
 ```
@@ -153,10 +207,10 @@ import Auth from "@/components/Auth";
 Hook 写法：
 
 ```tsx
-import { usePermission } from "@/hooks/usePermission";
+import { usePermission } from '@/hooks/usePermission';
 
 const { hasPermission } = usePermission();
-const canDelete = hasPermission("system:user:delete");
+const canDelete = hasPermission('system:user:delete');
 ```
 
 ## 7. 创建图表页
@@ -173,8 +227,8 @@ src/components/Charts
 <TrendAreaChart
   data={trendData}
   series={[
-    { dataKey: "visits", name: "访问量", color: "var(--color-primary)" },
-    { dataKey: "orders", name: "任务量", color: "var(--color-success)" },
+    { dataKey: 'visits', name: '访问量', color: 'var(--color-primary)' },
+    { dataKey: 'orders', name: '任务量', color: 'var(--color-success)' },
   ]}
 />
 ```
@@ -182,12 +236,7 @@ src/components/Charts
 柱状图：
 
 ```tsx
-<SimpleBarChart
-  data={trendData}
-  dataKey="orders"
-  name="任务量"
-  height={220}
-/>
+<SimpleBarChart data={trendData} dataKey="orders" name="任务量" height={220} />
 ```
 
 图表封装只统一响应式容器、坐标轴、网格和 tooltip 样式。复杂图表仍然可以直接使用 Recharts 或按项目需要扩展封装。
@@ -202,10 +251,10 @@ src/components/Charts
   column={2}
   items={[
     {
-      name: "name",
-      label: "名称",
-      type: "input",
-      rules: [{ required: true, message: "请输入名称" }],
+      name: 'name',
+      label: '名称',
+      type: 'input',
+      rules: [{ required: true, message: '请输入名称' }],
     },
   ]}
 />

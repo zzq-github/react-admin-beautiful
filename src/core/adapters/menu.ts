@@ -1,38 +1,41 @@
-import type { MenuItem as BackendMenuItem } from '@/api/login/types';
-import type { AdminMenu, AdminMenuType } from '@/core/types';
+import type { AdminMenu, AdminMenuType, BackendMenu, BackendMenuType } from '@/core/types';
 
-const typeMap: Record<number, AdminMenuType> = {
+const backendMenuTypeMap: Record<1 | 2 | 3, AdminMenuType> = {
   1: 'catalog',
   2: 'menu',
   3: 'button',
 };
 
-export function normalizeMenu(menu: BackendMenuItem): AdminMenu {
+export function normalizeMenu(menu: BackendMenu | AdminMenu): AdminMenu {
+  const title = menu.title ?? menu.name ?? '';
+
   return {
     ...menu,
-    title: menu.name,
+    title,
     path: menu.path || '',
-    component: menu.component,
-    icon: menu.icon,
-    visible: menu.visible,
-    keepAlive: menu.keepAlive,
-    alwaysShow: menu.alwaysShow,
-    type: typeMap[menu.type] || 'menu',
+    visible: menu.visible !== false,
+    keepAlive: menu.keepAlive ?? false,
+    type: normalizeMenuType(menu.type),
     children: menu.children?.map(normalizeMenu),
   };
 }
 
 export function normalizeMenus(
-  menus: BackendMenuItem | BackendMenuItem[] | AdminMenu | AdminMenu[] | null
+  menus: BackendMenu | BackendMenu[] | AdminMenu | AdminMenu[] | null | undefined,
 ): AdminMenu | AdminMenu[] | null {
   if (!menus) return null;
+
   if (Array.isArray(menus)) {
-    return menus.map((menu) => {
-      if (typeof menu.type === 'string') return menu as AdminMenu;
-      return normalizeMenu(menu as BackendMenuItem);
-    });
+    return menus.map(normalizeMenu);
   }
-  if (typeof menus.type === 'string') return menus as AdminMenu;
-  return normalizeMenu(menus as BackendMenuItem);
+
+  return normalizeMenu(menus);
 }
 
+export function normalizeMenuType(type: BackendMenuType | undefined): AdminMenuType {
+  if (type === 'catalog' || type === 'menu' || type === 'button') {
+    return type;
+  }
+
+  return backendMenuTypeMap[type as 1 | 2 | 3] ?? 'menu';
+}

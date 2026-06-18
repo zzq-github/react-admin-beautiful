@@ -1,7 +1,14 @@
-import { authHandlers } from './auth'
-import { dictHandlers } from './dict'
-import { userHandlers, roleHandlers, deptHandlers, positionHandlers } from './system'
-import { menuHandlers, configHandlers, logHandlers, permissionHandlers, notifyHandlers } from './others'
+import { authHandlers } from './auth';
+import { dictHandlers } from './dict';
+import { exampleHandlers } from './examples';
+import { userHandlers, roleHandlers, deptHandlers, positionHandlers } from './system';
+import {
+  menuHandlers,
+  configHandlers,
+  logHandlers,
+  permissionHandlers,
+  notifyHandlers,
+} from './others';
 
 /**
  * 合并所有 mock handlers
@@ -9,6 +16,7 @@ import { menuHandlers, configHandlers, logHandlers, permissionHandlers, notifyHa
 export const handlers = [
   ...authHandlers,
   ...dictHandlers,
+  ...exampleHandlers,
   ...userHandlers,
   ...roleHandlers,
   ...deptHandlers,
@@ -18,4 +26,4 @@ export const handlers = [
   ...logHandlers,
   ...permissionHandlers,
   ...notifyHandlers,
-]
+];

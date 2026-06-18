@@ -1,5 +1,8 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import { PaginationState, UseTableOptions } from "./types/tableRequest";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { apiProtocol } from '@/core/adapters/protocol';
+import { normalizePageResult } from '@/core/adapters/page';
+import type { PageResponseLike } from '@/core/types';
+import { PaginationState, UseTableOptions } from './types/tableRequest';
 
 const DEFAULT_PAGINATION: PaginationState = {
   current: 1,
@@ -24,11 +27,7 @@ const useTableRequest = <P extends Record<string, any> = any, T = any>({
   const searchParamsSnapshot = useRef<P>(params);
 
   const fetchData = useCallback(
-    async (
-      page = pagination.current,
-      size = pagination.pageSize,
-      currentParams?: P,
-    ) => {
+    async (page = pagination.current, size = pagination.pageSize, currentParams?: P) => {
       setLoading(true);
       if (currentParams) {
         searchParamsSnapshot.current = currentParams;
@@ -40,31 +39,18 @@ const useTableRequest = <P extends Record<string, any> = any, T = any>({
           pageSize: size,
           ...searchParamsSnapshot.current,
         });
+        const result = apiProtocol.getData<PageResult<T> | PageResponseLike<T> | T[]>(res);
+        const pageResult = normalizePageResult<T>(result);
 
-        const rawResult = res.data;
-
-        let list: T[] = [];
-        let total: number = 0;
-
-        if (Array.isArray(rawResult)) {
-          // 情况 A: 接口直接返回了数组 [{}, {}]
-          list = rawResult;
-          // total = rawResult.length;
-        } else if (rawResult && typeof rawResult === "object") {
-          // 情况 B: 接口返回了分页对象 { list: [], total: 10 }
-          list = rawResult.list || [];
-          total = rawResult.total || 0;
-        }
-
-        setData(list);
+        setData(pageResult.list);
         setPagination((p) => ({
           ...p,
           current: page,
           pageSize: size,
-          total: total,
+          total: pageResult.total,
         }));
       } catch (error) {
-        console.error("Table fetch error:", error);
+        console.error('Table fetch error:', error);
       } finally {
         setLoading(false);
       }

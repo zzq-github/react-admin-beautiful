@@ -1,6 +1,6 @@
-import { http, HttpResponse, delay } from 'msw'
+import { http, HttpResponse, delay } from 'msw';
 
-const BASE_URL = '/api'
+const BASE_URL = '/api';
 
 /**
  * 登录 & 认证相关 mock
@@ -8,8 +8,8 @@ const BASE_URL = '/api'
 export const authHandlers = [
   // 登录
   http.post(`${BASE_URL}/system/auth/login`, async ({ request }) => {
-    await delay(300)
-    const body = await request.json() as any
+    await delay(300);
+    const body = (await request.json()) as any;
 
     if (body.username === 'admin' && body.password === 'admin123') {
       return HttpResponse.json({
@@ -21,19 +21,19 @@ export const authHandlers = [
           expiresTime: Date.now() + 86400000,
         },
         msg: '',
-      })
+      });
     }
 
     return HttpResponse.json({
       code: 401,
       data: null,
       msg: '用户名或密码错误',
-    })
+    });
   }),
 
   // 获取权限信息（用户信息 + 菜单 + 权限）
   http.get(`${BASE_URL}/system/auth/get-permission-info`, async () => {
-    await delay(200)
+    await delay(200);
     return HttpResponse.json({
       code: 200,
       data: {
@@ -45,27 +45,35 @@ export const authHandlers = [
           username: 'admin',
           email: 'admin@example.com',
         },
-        roles: ['admin'],
-        permissions: ['*'],
+        roles: ['template_admin'],
+        permissions: [
+          'example:project:create',
+          'example:project:update',
+          'example:project:delete',
+          'system:user:create',
+          'system:role:create',
+          'system:dict:create',
+          'system:menu:create',
+        ],
         menus: buildMockMenus(),
       },
       msg: '',
-    })
+    });
   }),
 
   // 退出登录
   http.post(`${BASE_URL}/system/auth/logout`, async () => {
-    await delay(100)
+    await delay(100);
     return HttpResponse.json({
       code: 200,
       data: true,
       msg: '',
-    })
+    });
   }),
 
   // 刷新令牌
   http.post(`${BASE_URL}/system/auth/refresh-token`, async () => {
-    await delay(100)
+    await delay(100);
     return HttpResponse.json({
       code: 200,
       data: {
@@ -75,9 +83,9 @@ export const authHandlers = [
         expiresTime: Date.now() + 86400000,
       },
       msg: '',
-    })
+    });
   }),
-]
+];
 
 /**
  * 构造模拟菜单树
@@ -122,14 +130,48 @@ function buildMockMenus() {
           {
             id: 201,
             parentId: 200,
-            name: '基础列表',
+            name: 'CRUD 示例',
             path: 'basic-list',
             component: 'examples/BasicList/index',
             icon: 'table',
             visible: true,
             keepAlive: true,
             type: 2,
-            children: [],
+            children: [
+              {
+                id: 20101,
+                parentId: 201,
+                name: '新增项目',
+                path: '',
+                permission: 'example:project:create',
+                visible: true,
+                keepAlive: false,
+                type: 3,
+                children: [],
+              },
+              {
+                id: 20102,
+                parentId: 201,
+                name: '编辑项目',
+                path: '',
+                permission: 'example:project:update',
+                visible: true,
+                keepAlive: false,
+                type: 3,
+                children: [],
+              },
+              {
+                id: 20103,
+                parentId: 201,
+                name: '删除项目',
+                path: '',
+                permission: 'example:project:delete',
+                visible: true,
+                keepAlive: false,
+                type: 3,
+                children: [],
+              },
+            ],
           },
           {
             id: 202,
@@ -233,5 +275,5 @@ function buildMockMenus() {
         ],
       },
     ],
-  }
+  };
 }

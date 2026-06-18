@@ -70,10 +70,10 @@ pnpm preview    # 预览生产构建产物
 默认 Mock 菜单分为三组：
 
 - `Dashboard`：首页概览示例
-- `Examples`：最小学习示例，包括基础列表、基础表单、Theme Tokens
+- `Examples`：最小学习示例，包括 CRUD 示例、基础表单、Theme Tokens
 - `System Demo`：复杂 CRUD 和权限示例，包括用户、角色、部门、菜单、字典等页面
 
-`Examples` 更适合学习如何新建页面，`System Demo` 更适合参考复杂业务页如何组织 hooks、schema、表格、弹窗和操作逻辑。
+`Examples` 更适合学习如何新建页面、接入接口和按钮权限，`System Demo` 更适合参考复杂业务页如何组织 hooks、schema、表格、弹窗和操作逻辑。
 
 ## 模板定位
 
@@ -240,7 +240,9 @@ src/pages/system/UserManagement/index.tsx
 
 ## 文档
 
+- [文档索引](./docs/README.md)
 - [自定义项目指南](./docs/customize-template.md)
+- [后端接入指南](./docs/backend-integration.md)
 - [创建页面指南](./docs/create-page.md)
 - [模板设计说明](./docs/admin-template-guide.md)
 - [掘金介绍文章](./docs/juejin-intro-post.md)
