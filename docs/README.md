@@ -25,10 +25,8 @@
 - 后端协议：`backend-integration.md`、`api-conventions.md`
 - 页面开发：`create-page.md`
 - 架构解释：`architecture.md`
-- 归档材料：`archive/`
 
 ## 维护约定
 
 - 根 `README.md` 只放项目定位、快速启动、目录结构和文档入口。
 - 新增接入步骤优先补到对应专题文档，不要把同一段说明同时写进多个文件。
-- 面向宣传或发布平台的文章放到 `archive/`，避免干扰使用者查文档。
