@@ -8,17 +8,29 @@ export interface ApiResponse<T = any> {
   [key: string]: any;
 }
 
+/**
+ * 模板内部统一使用 pageNo/pageSize。
+ * 如果真实后端使用 current/page 或 size/limit，优先在 API 层或 adapter 中转换。
+ */
 export interface PageParam {
   pageNo: number;
   pageSize: number;
 }
 
+/**
+ * 页面和表格 Hook 只消费这个标准分页结构。
+ * 这样不同后端的 rows/records/data 字段不会扩散到业务页面。
+ */
 export interface PageResult<T = any> {
   list: T[];
   total: number;
   [key: string]: any;
 }
 
+/**
+ * 后端分页响应的兼容输入。
+ * 新项目不需要全部支持，只保留这里是为了降低接入不同后端时的改造成本。
+ */
 export interface PageResponseLike<T = any> {
   list?: T[];
   rows?: T[];
@@ -33,6 +45,10 @@ export interface PageResponseLike<T = any> {
 export type AdminMenuType = 'catalog' | 'menu' | 'button';
 export type BackendMenuType = 1 | 2 | 3 | AdminMenuType;
 
+/**
+ * 模板内部的用户最小模型。
+ * 后端可以返回更多字段，业务页面仍可通过索引签名读取扩展信息。
+ */
 export interface AdminUser {
   id: string | number;
   username: string;
@@ -61,6 +77,10 @@ export interface BackendMenu {
   [key: string]: any;
 }
 
+/**
+ * 动态路由和侧边栏最终消费的菜单模型。
+ * adapter 会把后端菜单统一整理成这个结构，布局和路由不直接关心后端字段差异。
+ */
 export interface AdminMenu {
   id: string | number;
   parentId?: string | number;
@@ -86,6 +106,10 @@ export interface BackendPermissionInfo {
   [key: string]: any;
 }
 
+/**
+ * 用户权限信息的内部标准模型。
+ * roles 用于角色判断，permissions 用于页面和按钮级权限判断，menus 用于生成菜单和动态路由。
+ */
 export interface AdminPermissionInfo {
   user: AdminUser;
   roles: string[];

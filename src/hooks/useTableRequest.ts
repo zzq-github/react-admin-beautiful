@@ -24,35 +24,74 @@ const useTableRequest = <P extends Record<string, any> = any, T = any>({
   });
 
   const fetchedRef = useRef(false);
+  const mountedRef = useRef(false);
+  const requestIdRef = useRef(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const searchParamsSnapshot = useRef<P>(params);
+
+  useEffect(() => {
+    mountedRef.current = true;
+
+    return () => {
+      mountedRef.current = false;
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   const fetchData = useCallback(
     async (page = pagination.current, size = pagination.pageSize, currentParams?: P) => {
-      setLoading(true);
+      const requestId = requestIdRef.current + 1;
+      const abortController = new AbortController();
+
+      // 表格查询经常由分页、筛选、刷新连续触发。
+      // 取消旧请求并用 requestId 保护状态，可以避免旧响应覆盖最新表格数据。
+      requestIdRef.current = requestId;
+      abortControllerRef.current?.abort();
+      abortControllerRef.current = abortController;
+
+      if (mountedRef.current) {
+        setLoading(true);
+      }
+
       if (currentParams) {
+        // reload(newParams) 会更新筛选快照；翻页时继续沿用最近一次筛选条件。
         searchParamsSnapshot.current = currentParams;
       }
 
       try {
-        const res = await request({
-          pageNo: page,
-          pageSize: size,
-          ...searchParamsSnapshot.current,
-        });
+        const res = await request(
+          {
+            pageNo: page,
+            pageSize: size,
+            ...searchParamsSnapshot.current,
+          },
+          {
+            signal: abortController.signal,
+          },
+        );
         const result = apiProtocol.getData<PageResult<T> | PageResponseLike<T> | T[]>(res);
         const pageResult = normalizePageResult<T>(result);
 
-        setData(pageResult.list);
-        setPagination((p) => ({
-          ...p,
-          current: page,
-          pageSize: size,
-          total: pageResult.total,
-        }));
+        // 只允许最新请求落库，解决快速切页或筛选时的并发返回顺序问题。
+        if (mountedRef.current && requestIdRef.current === requestId) {
+          setData(pageResult.list);
+          setPagination((p) => ({
+            ...p,
+            current: page,
+            pageSize: size,
+            total: pageResult.total,
+          }));
+        }
       } catch (error) {
+        if (abortController.signal.aborted) {
+          return;
+        }
+
         console.error('Table fetch error:', error);
       } finally {
-        setLoading(false);
+        if (mountedRef.current && requestIdRef.current === requestId) {
+          setLoading(false);
+        }
       }
     },
     [request],

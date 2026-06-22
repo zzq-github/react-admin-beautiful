@@ -1,13 +1,11 @@
-import request from "@/utils/request";
-import { DeptQuery, DeptRespVO, DeptSaveReqVO, DeptSimpleRespVO } from "./types";
+import request from '@/utils/request';
+import { DeptQuery, DeptRespVO, DeptSaveReqVO, DeptSimpleRespVO } from './types';
 
 // 查询部门列表
-export function getDepartmentList(
-  query: DeptQuery,
-): Promise<ApiResponse<DeptRespVO[]>> {
+export function getDepartmentList(query: DeptQuery): Promise<ApiResponse<DeptRespVO[]>> {
   return request({
-    url: "/system/dept/list",
-    method: "get",
+    url: '/system/dept/list',
+    method: 'get',
     params: query,
   });
 }
@@ -16,32 +14,36 @@ export function getDepartmentList(
 export function getListSimpleDepartments(): Promise<ApiResponse<DeptSimpleRespVO[]>> {
   return request({
     url: '/system/dept/list-all-simple',
-    method: 'get'
-  })
+    method: 'get',
+  });
 }
 
 // 新增部门
-export function addDepartment(data:DeptSaveReqVO) {
+export function addDepartment(data: DeptSaveReqVO) {
   return request({
     url: '/system/dept/create',
     method: 'post',
-    data: data
-  })
+    data: data,
+  });
 }
 
 // 修改部门
-export function updateDepartment(data:DeptSaveReqVO) {
+export function updateDepartment(data: DeptSaveReqVO) {
   return request({
     url: '/system/dept/update',
     method: 'put',
-    data: data
-  })
+    data: data,
+  });
 }
 
 // 删除部门
-export function deleteDepartment(id:number) {
+export function deleteDepartment(id: number) {
   return request({
     url: '/system/dept/delete?id=' + id,
-    method: 'delete'
-  })
+    method: 'delete',
+  });
 }
+
+export const getDepartmentTree = getDepartmentList;
+export const getDepartmentSimpleList = getListSimpleDepartments;
+export const createDepartment = addDepartment;

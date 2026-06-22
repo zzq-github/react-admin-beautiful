@@ -16,6 +16,8 @@ export function getRoleListAllSimple(): Promise<ApiResponse<RoleRespVO[]>> {
   });
 }
 
+export const getRoleSimpleList = getRoleListAllSimple;
+
 export function addRole(data: RoleSaveReqVO): Promise<ApiResponse> {
   return request({
     url: '/system/role/create',
@@ -23,6 +25,8 @@ export function addRole(data: RoleSaveReqVO): Promise<ApiResponse> {
     data,
   });
 }
+
+export const createRole = addRole;
 
 export function updateRole(data: RoleSaveReqVO): Promise<ApiResponse> {
   return request({

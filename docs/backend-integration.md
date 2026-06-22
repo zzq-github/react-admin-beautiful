@@ -127,6 +127,20 @@ src/core/adapters/protocol.ts
 
 优先修改 `apiProtocol`，而不是在每个页面或接口里单独处理。
 
+推荐后端错误码保持语义稳定：
+
+| 错误码 | 含义            | 前端行为                       |
+| ------ | --------------- | ------------------------------ |
+| `400`  | 参数错误        | 展示后端返回信息或默认参数错误 |
+| `401`  | 未登录/登录过期 | 尝试刷新 token，失败后引导登录 |
+| `403`  | 无权限          | 展示无权限提示                 |
+| `404`  | 资源不存在      | 展示资源不存在提示             |
+| `409`  | 数据冲突        | 提示刷新后重试                 |
+| `429`  | 请求频率过高    | 提示稍后重试                   |
+| `500`  | 服务异常        | 展示服务异常提示               |
+
+错误码文案集中在 `src/utils/errorCode.ts`。业务页面不建议硬编码错误码文案。
+
 ## 分页响应协议
 
 模板内部推荐分页结构为：
@@ -168,6 +182,32 @@ Authorization: Bearer <accessToken>
 
 当接口返回未授权码时，`src/utils/request.ts` 会尝试使用 refreshToken 刷新令牌，并重放刷新期间挂起的请求。刷新失败时会提示用户重新登录。
 
+## 刷新后的登录态恢复
+
+登录态由两部分组成：
+
+| 数据           | 存放位置                 | 用途                           |
+| -------------- | ------------------------ | ------------------------------ |
+| `accessToken`  | `localStorage`           | 请求层自动注入 Authorization   |
+| `refreshToken` | `localStorage`           | accessToken 过期后刷新令牌     |
+| `info`         | `user-store` 持久化存储  | 用户信息、角色、权限码         |
+| `rawMenus`     | `user-store` 持久化存储  | 后端原始菜单，用于恢复动态路由 |
+| `menus`        | 运行时从 `rawMenus` 派生 | 侧栏菜单，不直接持久化         |
+| `status`       | 运行时从持久化数据派生   | 控制 Layout 是否进入加载态     |
+
+刷新浏览器后，`src/store/useUserStore.ts` 会从持久化的 `info` 和 `rawMenus` 恢复用户状态：
+
+```text
+user-store persisted info/rawMenus
+  -> recoverPersistedUserState
+  -> convertMenuVOToMenuItems(rawMenus)
+  -> status = loaded
+  -> Sidebar 使用 menus
+  -> DynamicRoutes 使用 rawMenus
+```
+
+因此 `menus` 不需要持久化，避免存储重复数据；只要 `rawMenus` 仍然存在，刷新后就能重新生成侧栏菜单和动态路由。若本地没有 token，`Layout` 会直接跳转登录页；若有 token 但没有可恢复的权限信息，`Layout` 会重新调用 `/system/auth/get-permission-info`。
+
 ## 权限信息结构
 
 默认权限信息结构参考：
@@ -176,7 +216,7 @@ Authorization: Bearer <accessToken>
 interface PermissionInfo {
   user: UserInfo;
   roles: string[];
-  permissions: string[];
+  permissions?: string[];
   menus: MenuItem;
 }
 ```
@@ -196,6 +236,43 @@ catalog
 menu
 button
 ```
+
+按钮权限支持两种返回方式。
+
+第一种是后端直接返回 `permissions` 数组，页面中的 `<Auth>` 和 `usePermission` 会直接使用这些权限码：
+
+```json
+{
+  "roles": ["template_admin"],
+  "permissions": ["example:project:create", "example:project:update", "example:project:delete"],
+  "menus": []
+}
+```
+
+第二种是后端只在菜单树中返回按钮节点。前端会在 `src/core/adapters/auth.ts` 中递归提取 `type: 3` / `type: "button"` 节点上的 `permission` 字段，并合并到内部的 `AdminPermissionInfo.permissions`：
+
+```json
+{
+  "roles": ["template_admin"],
+  "menus": [
+    {
+      "name": "CRUD 示例",
+      "path": "basic-list",
+      "component": "examples/BasicList/index",
+      "type": 2,
+      "children": [
+        {
+          "name": "新增项目",
+          "type": 3,
+          "permission": "example:project:create"
+        }
+      ]
+    }
+  ]
+}
+```
+
+两种方式可以同时使用，前端会去重合并。这样后端可以根据自身权限模型选择“单独权限码数组”或“菜单树携带按钮权限”，页面层不需要改动。
 
 如果你的后端字段名不同，优先修改：
 
@@ -229,6 +306,7 @@ src/core/adapters/page.ts
 | `type = button`  | 用于按钮权限，不进入侧栏，也不生成页面路由。                        |
 | `path`           | 支持相对路径和 `/` 开头的绝对路径。                                 |
 | `component`      | 对应 `src/pages` 下的页面入口，例如 `system/UserManagement/index`。 |
+| `permission`     | 菜单节点上用于页面访问权限；按钮节点上用于按钮权限。                |
 
 例如后端返回：
 
@@ -237,6 +315,7 @@ src/core/adapters/page.ts
   "name": "用户管理",
   "path": "user",
   "component": "system/UserManagement/index",
+  "permission": "system:user:list",
   "type": 2
 }
 ```
@@ -246,6 +325,32 @@ src/core/adapters/page.ts
 ```text
 侧栏路径：/system/user
 路由组件：src/pages/system/UserManagement/index.tsx
+```
+
+动态路由会读取菜单节点上的 `permission` 字段并包裹页面级权限校验。如果用户直接输入 URL 访问无权限页面，会展示 403 状态页。按钮节点的 `permission` 会在 `src/core/adapters/auth.ts` 中提取到 `AdminPermissionInfo.permissions`，供 `<Auth>` 和 `usePermission` 使用。
+
+## 请求并发与卸载保护
+
+`useRequest` 和 `useTableRequest` 内置了轻量请求保护：
+
+- 新请求发起时会中止上一次请求的 `AbortController`。
+- 组件卸载时会中止当前请求。
+- 过期响应不会覆盖最新请求结果。
+- 如果接口函数未来接入 axios `signal`，可以通过第二个参数 `context.signal` 继续向下传递。
+
+接口函数示例：
+
+```ts
+import type { RequestContext } from '@/hooks/types/request';
+
+export function getUserPage(params: UserPageReq, context?: RequestContext) {
+  return request({
+    url: '/system/user/page',
+    method: 'get',
+    params,
+    signal: context?.signal,
+  });
+}
 ```
 
 ## 新增接口建议
@@ -272,6 +377,26 @@ export function getUserPage(params: UserPageReq): Promise<ApiResponse<PageResult
 }
 ```
 
+## Mock 契约建议
+
+Mock 只作为真实后端契约的本地样例，推荐保持这些规则：
+
+- URL 和 method 与真实接口一致。
+- 成功响应统一为 `{ code: 200, data, msg: "" }`。
+- 分页响应统一为 `{ list, total }`。
+- 失败响应统一为 `{ code, data: null, msg }`。
+- 登录、权限、菜单、分页字段优先和后端约定保持一致。
+
+新增 mock 时优先使用 `src/mock/utils/response.ts`：
+
+```ts
+import { ok, pageOk, fail } from '@/mock/utils/response';
+
+return ok(true);
+return pageOk(list, total);
+return fail(403, '当前操作没有权限');
+```
+
 ## 接入检查清单
 
 - 已将 `VITE_MSW_ENABLE` 改为 `false`。
@@ -279,6 +404,6 @@ export function getUserPage(params: UserPageReq): Promise<ApiResponse<PageResult
 - 后端响应格式已匹配 `src/core/adapters/protocol.ts`。
 - 分页响应格式已匹配 `src/core/adapters/page.ts`。
 - 登录接口能返回 `accessToken` 和 `refreshToken`。
-- 权限接口能返回 `user`、`roles`、`permissions`、`menus`。
+- 权限接口能返回 `user`、`roles`、`menus`；按钮权限可通过 `permissions` 数组返回，也可通过菜单树 `type: 3 + permission` 返回。
 - 菜单 `component` 能匹配 `src/pages/**/index.tsx` 页面路径。
 - 浏览器 Network 中请求地址符合预期。

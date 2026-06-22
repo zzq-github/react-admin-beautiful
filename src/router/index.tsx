@@ -11,11 +11,13 @@ const Login = lazy(() => import('@/pages/LoginPage'));
 const NotifyMessage = lazy(() => import('@/pages/user/NotifyMessage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
 
+// 静态页面和动态页面共用同一个轻量 fallback，避免首屏出现多套加载样式。
 const pageFallback = <PageLoading label="页面加载中..." />;
 
 const Router: React.FC = () => {
   const [dynamicRouteElements, isLoading] = useDynamicRoutes();
 
+  // 动态菜单恢复前命中未知路由时先展示加载态，避免刷新深层页面时闪到 404。
   const renderLoading = () => <PageLoading fullscreen label="路由加载中..." />;
 
   return (

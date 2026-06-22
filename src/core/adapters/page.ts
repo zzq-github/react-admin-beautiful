@@ -1,5 +1,11 @@
 import type { PageResponseLike, PageResult } from '@/core/types';
 
+/**
+ * 把不同后端的分页结构整理成 { list, total }。
+ *
+ * 支持 list/rows/records/data 和 total/count/totalCount，是为了让 BaseTable、
+ * useTableRequest 以及业务页面不关心真实后端字段名。
+ */
 export function normalizePageResult<T = any>(
   response: PageResult<T> | PageResponseLike<T> | T[] | null | undefined,
 ): PageResult<T> {

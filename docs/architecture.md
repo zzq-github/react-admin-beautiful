@@ -1,4 +1,4 @@
-# React Admin 通用模板设计说明
+# 架构说明
 
 本项目的目标是提供一个可接入任意后端的 React Admin 模板。模板内部使用稳定的数据模型，具体后端返回格式通过 adapter 转换，避免业务页面直接绑定某个后端协议。
 
@@ -162,18 +162,18 @@ src/theme/appTheme.ts
 `ThemeProvider` 会把 `appTheme` 同步到 Ant Design token 和 CSS 变量：
 
 ```ts
---color-primary
---color-primary-hover
---color-primary-active
---color-primary-bg
---color-success
---color-success-bg
---color-warning
---color-warning-bg
---color-error
---color-error-bg
---color-info
---color-info-bg
+--color - primary;
+--color - primary - hover;
+--color - primary - active;
+--color - primary - bg;
+--color - success;
+--color - success - bg;
+--color - warning;
+--color - warning - bg;
+--color - error;
+--color - error - bg;
+--color - info;
+--color - info - bg;
 ```
 
 运行时设置面板只保留显示模式和布局模式；侧边栏明暗跟随显示模式。品牌色、成功、警告、错误、信息等业务色，以及 Ant Design 全局组件尺寸都通过 `src/theme/appTheme.ts` 自定义。业务组件应优先使用 `theme` 语义变量，例如 `text-theme-success`、`bg-theme-error-bg`、`border-theme-warning-border`，而不是直接写死 `blue-*`、`red-*` 等 Tailwind 颜色。
@@ -181,7 +181,7 @@ src/theme/appTheme.ts
 默认 Ant Design 组件尺寸为：
 
 ```ts
-componentSize: "small"
+componentSize: 'small';
 ```
 
 ## 图标使用边界

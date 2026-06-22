@@ -1,17 +1,13 @@
-import request from "@/utils/request";
-import {
-  ConfigRespVO,
-  FileConfigSaveReqVO,
-  GetConfigPageQueryReq,
-} from "./types";
+import request from '@/utils/request';
+import { ConfigRespVO, FileConfigSaveReqVO, GetConfigPageQueryReq } from './types';
 
 // 查询参数列表
 export function getConfigListByPage(
   query: GetConfigPageQueryReq,
 ): Promise<ApiResponse<PageResult<ConfigRespVO>>> {
   return request({
-    url: "/infra/config/page",
-    method: "get",
+    url: '/infra/config/page',
+    method: 'get',
     params: query,
   });
 }
@@ -19,8 +15,8 @@ export function getConfigListByPage(
 // 新增参数配置
 export function addConfig(data: FileConfigSaveReqVO): Promise<ApiResponse> {
   return request({
-    url: "/infra/config/create",
-    method: "post",
+    url: '/infra/config/create',
+    method: 'post',
     data: data,
   });
 }
@@ -28,8 +24,8 @@ export function addConfig(data: FileConfigSaveReqVO): Promise<ApiResponse> {
 // 修改参数配置
 export function updateConfig(data: FileConfigSaveReqVO): Promise<ApiResponse> {
   return request({
-    url: "/infra/config/update",
-    method: "put",
+    url: '/infra/config/update',
+    method: 'put',
     data: data,
   });
 }
@@ -37,7 +33,10 @@ export function updateConfig(data: FileConfigSaveReqVO): Promise<ApiResponse> {
 // 删除参数配置
 export function deleteConfig(configId: number): Promise<ApiResponse> {
   return request({
-    url: "/infra/config/delete?id=" + configId,
-    method: "delete",
+    url: '/infra/config/delete?id=' + configId,
+    method: 'delete',
   });
 }
+
+export const getConfigPage = getConfigListByPage;
+export const createConfig = addConfig;

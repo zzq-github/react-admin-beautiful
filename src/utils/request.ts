@@ -11,6 +11,7 @@ export let isRelogin = { show: false };
 
 type RequestCallback = () => void;
 
+// token 刷新期间进来的 401 请求会先排队，刷新成功后再用新 token 重放。
 let pendingRequests: RequestCallback[] = [];
 let isRefreshingToken = false;
 
@@ -29,6 +30,7 @@ service.interceptors.request.use(
       config.headers['Authorization'] = `Bearer ${getAccessToken()}`;
     }
 
+    // 兼容后端常见的 query[key]=value 查询格式，避免 axios 默认序列化和后端约定不一致。
     if (config.method === 'get' && config.params) {
       const query = serializeQuery(config.params);
       if (query) {
@@ -46,6 +48,7 @@ service.interceptors.response.use(
   async (res: AxiosResponse) => {
     let data = res.data;
 
+    // 文件下载接口可能返回 blob；如果 blob 里其实是 JSON 错误信息，需要继续按普通响应处理。
     if (res.config.responseType === 'blob' || res.config.responseType === 'arraybuffer') {
       if (res.data?.type !== 'application/json') {
         return res.data;
@@ -120,6 +123,7 @@ async function handleUnauthorizedResponse(res: AxiosResponse): Promise<any> {
     return handleAuthorized();
   }
 
+  // 已有刷新请求在进行时，后续 401 请求不重复刷新，只等待刷新结果后重放原请求。
   if (isRefreshingToken) {
     return new Promise((resolve) => {
       pendingRequests.push(() => {
@@ -139,6 +143,7 @@ async function handleUnauthorizedResponse(res: AxiosResponse): Promise<any> {
   }
 
   try {
+    // 动态导入可以避免 request.ts 和 tokenRefreshService 形成静态循环依赖。
     const { tokenRefreshService } = await import('@/core/services/tokenRefreshService');
     const refreshTokenRes = await tokenRefreshService.refreshToken();
     setToken(refreshTokenRes.data);

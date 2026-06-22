@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import PageLoading from '@/components/PageLoading';
 import PageState from '@/components/PageState';
+import RequirePermission from '@/components/RequirePermission';
 import { useUserStore } from '@/store/useUserStore';
 import { getAccessToken } from '@/utils/auth';
 import { convertMenuVOToRouteConfigs } from '@/utils/route';
@@ -22,6 +23,7 @@ export const useDynamicRoutes = (): [React.ReactElement[], boolean] => {
 
     const menuArray = Array.isArray(rawMenus) ? rawMenus : [rawMenus];
     const routeConfigs = convertMenuVOToRouteConfigs(menuArray);
+    // dashboard 和 extraRoutes 是静态注册的页面，动态路由需要跳过它们，避免重复注册。
     const staticPaths = new Set(['dashboard', ...extraRoutePaths]);
 
     const elements = routeConfigs
@@ -47,7 +49,10 @@ export const useDynamicRoutes = (): [React.ReactElement[], boolean] => {
             path={config.path.replace(/^\//, '')}
             element={
               <Suspense fallback={<PageLoading label="页面加载中..." />}>
-                <LazyComponent />
+                {/* 页面级权限兜底。按钮权限由 Auth 组件处理，页面访问权限由路由层处理。 */}
+                <RequirePermission code={config.permission}>
+                  <LazyComponent />
+                </RequirePermission>
               </Suspense>
             }
           />

@@ -3,10 +3,15 @@ import type { AdminMenu } from '@/core/types';
 export interface RouteConfig {
   path: string;
   componentPath: string;
+  permission?: string;
   keepAlive?: boolean;
   alwaysShow?: boolean;
 }
 
+/**
+ * 拼接父子菜单路径，并把重复斜杠和尾部斜杠规整掉。
+ * 后端菜单经常混用 '/system'、'user'、'/user'，这里统一成 React Router 可消费的路径。
+ */
 export function buildFullPath(childPath: string, parentPath = ''): string {
   if (!childPath) {
     return normalizeRoutePath(parentPath);
@@ -25,6 +30,10 @@ export function buildFullPath(childPath: string, parentPath = ''): string {
   return normalizeRoutePath(`${parent}/${child}`);
 }
 
+/**
+ * 把一个菜单节点转换为动态路由配置。
+ * 只有 type=menu 且配置了 component 的节点才会生成页面路由，目录和按钮节点会被忽略。
+ */
 export function convertMenuVOToRouteConfig(menu: AdminMenu, parentPath = ''): RouteConfig | null {
   if (menu.visible === false || menu.type !== 'menu' || !menu.component) {
     return null;
@@ -33,11 +42,16 @@ export function convertMenuVOToRouteConfig(menu: AdminMenu, parentPath = ''): Ro
   return {
     path: getMenuRoutePath(menu, parentPath),
     componentPath: menu.component,
+    permission: menu.permission,
     keepAlive: menu.keepAlive,
     alwaysShow: menu.alwaysShow,
   };
 }
 
+/**
+ * 深度遍历菜单树，生成所有动态页面路由。
+ * 目录节点不会生成路由，但会参与子节点路径拼接。
+ */
 export function convertMenuVOToRouteConfigs(menus: AdminMenu[]): RouteConfig[] {
   const result: RouteConfig[] = [];
 

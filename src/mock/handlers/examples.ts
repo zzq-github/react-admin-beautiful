@@ -1,9 +1,10 @@
-import { delay, http, HttpResponse } from 'msw';
+import { delay, http } from 'msw';
 import type {
   ExampleProjectPageReq,
   ExampleProjectResp,
   ExampleProjectSaveReq,
 } from '@/api/examples/project/types';
+import { ok, pageOk } from '@/mock/utils/response';
 
 const BASE_URL = '/api';
 
@@ -93,14 +94,7 @@ export const exampleHandlers = [
     const start = (pageNo - 1) * pageSize;
     const list = filteredList.slice(start, start + pageSize);
 
-    return HttpResponse.json({
-      code: 200,
-      data: {
-        list,
-        total: filteredList.length,
-      },
-      msg: '',
-    });
+    return pageOk(list, filteredList.length);
   }),
 
   http.post(`${BASE_URL}/examples/project/create`, async ({ request }) => {
@@ -114,7 +108,7 @@ export const exampleHandlers = [
     });
     nextProjectId += 1;
 
-    return HttpResponse.json({ code: 200, data: true, msg: '' });
+    return ok(true);
   }),
 
   http.put(`${BASE_URL}/examples/project/update`, async ({ request }) => {
@@ -131,7 +125,7 @@ export const exampleHandlers = [
         : item,
     );
 
-    return HttpResponse.json({ code: 200, data: true, msg: '' });
+    return ok(true);
   }),
 
   http.delete(`${BASE_URL}/examples/project/delete`, async ({ request }) => {
@@ -141,7 +135,7 @@ export const exampleHandlers = [
 
     projectList = projectList.filter((item) => item.id !== id);
 
-    return HttpResponse.json({ code: 200, data: true, msg: '' });
+    return ok(true);
   }),
 
   http.delete(`${BASE_URL}/examples/project/delete-list`, async ({ request }) => {
@@ -151,7 +145,7 @@ export const exampleHandlers = [
 
     projectList = projectList.filter((item) => !idSet.has(item.id));
 
-    return HttpResponse.json({ code: 200, data: true, msg: '' });
+    return ok(true);
   }),
 ];
 

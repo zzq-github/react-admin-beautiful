@@ -37,6 +37,7 @@ export default BasicList;
   name: 'CRUD 示例',
   path: 'basic-list',
   component: 'examples/BasicList/index',
+  permission: 'example:project:list',
   type: 2,
   visible: true
 }
@@ -162,9 +163,23 @@ modalRef.current?.open({
 });
 ```
 
-## 6. 添加按钮权限
+## 6. 添加页面和按钮权限
 
-模板提供 `<Auth>` 和 `usePermission` 两种写法。Mock 环境默认返回显式权限码，便于观察按钮权限效果。
+模板提供页面权限和按钮权限两层控制。
+
+页面权限由动态菜单中的 `permission` 字段驱动。如果用户直接访问没有权限的动态路由，会展示 `PageState type="forbidden"`：
+
+```ts
+{
+  name: 'CRUD 示例',
+  path: 'basic-list',
+  component: 'examples/BasicList/index',
+  permission: 'example:project:list',
+  type: 2
+}
+```
+
+按钮权限使用 `<Auth>` 和 `usePermission`。Mock 环境默认返回显式权限码，便于观察按钮权限效果。
 
 组件写法：
 
