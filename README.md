@@ -1,4 +1,4 @@
-# React Admin Plus
+# React Admin Beautiful
 
 [![CI](https://github.com/zzq-github/react-admin-beautiful/actions/workflows/ci.yml/badge.svg)](https://github.com/zzq-github/react-admin-beautiful/actions/workflows/ci.yml)
 [![Deploy Pages](https://github.com/zzq-github/react-admin-beautiful/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/zzq-github/react-admin-beautiful/actions/workflows/deploy-pages.yml)
@@ -7,7 +7,7 @@
 ![Vite](https://img.shields.io/badge/Vite-4-646cff?logo=vite&logoColor=white)
 ![Ant Design](https://img.shields.io/badge/Ant%20Design-6-1677ff?logo=antdesign&logoColor=white)
 
-React Admin Plus 是一个面向开源复用和快速二开的 React Admin 通用模板。它保留后台项目最常见的基础能力：登录、布局、动态路由、菜单权限、按钮权限、主题 token、Mock、CRUD 示例、CI 和 GitHub Pages 部署。
+React Admin Beautiful 是一个面向开源复用和快速二开的 React Admin 通用模板。它保留后台项目最常见的基础能力：登录、布局、动态路由、菜单权限、按钮权限、主题 token、Mock、CRUD 示例、CI 和 GitHub Pages 部署。
 
 - 在线预览：[https://zzq-github.github.io/react-admin-beautiful/](https://zzq-github.github.io/react-admin-beautiful/)
 - GitHub：[https://github.com/zzq-github/react-admin-beautiful](https://github.com/zzq-github/react-admin-beautiful)
